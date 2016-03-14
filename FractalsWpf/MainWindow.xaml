@@ -2,10 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Fractals"
-        Height="350"
-        Width="525">
+        Height="600"
+        Width="600"
+        ResizeMode="NoResize">
     
-    <Grid>
+    <Grid Background="DeepPink" x:Name="Grid">
+        <Image x:Name="FractalImage" Stretch="None" Margin="10" />
     </Grid>
     
 </Window>
