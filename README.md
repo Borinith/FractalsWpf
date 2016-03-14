@@ -12,6 +12,10 @@ This repo is my attempt at exploring fractals in C# / WPF.
 * Make the UI look nice e.g. by using [Material Design In XAML Toolkit](http://materialdesigninxaml.net/)
 * MVVM
 
+## Screenshot
+
+![BasicScreenshot](https://raw.github.com/taylorjg/FractalsWpf/master/Images/BasicScreenshot.png)
+
 ## Links
 
 * [Fractal (Wikipedia)](https://en.wikipedia.org/wiki/Fractal)
