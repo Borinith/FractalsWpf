@@ -10,6 +10,7 @@ This repo is my attempt at exploring fractals in C# / WPF.
 * Run the calculations on the GPU using OpenCL
 * Enhance the UI to allow different areas to be explored and zoomed into
 * Make the UI look nice e.g. by using [Material Design In XAML Toolkit](http://materialdesigninxaml.net/)
+* MVVM
 
 ## Links
 

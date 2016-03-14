@@ -6,8 +6,8 @@
         Width="600"
         ResizeMode="NoResize">
     
-    <Grid Background="DeepPink" x:Name="Grid">
-        <Image x:Name="FractalImage" Stretch="None" Margin="10" />
+    <Grid x:Name="Grid">
+        <Image x:Name="FractalImage" Stretch="None" />
     </Grid>
     
 </Window>
