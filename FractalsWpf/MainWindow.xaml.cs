@@ -34,12 +34,16 @@ namespace FractalsWpf
                     null);
 
                 var sourceRect = new Int32Rect(0, 0, _fractalImageWidth, _fractalImageHeight);
-                const double x1 = -2.25d;
-                const double x2 = 0.75d;
-                const double y1 = -1.5d;
-                const double y2 = 1.5d;
+                //var bottomLeft = new Point(-2.25d, -1.5d);
+                //var topRight = new Point(0.75d, 1.5d);
+                //var bottomLeft = new Point(-1.5d, -0.5d);
+                //var topRight = new Point(-0.5d, 0.5d);
+                //var bottomLeft = new Point(-0.0d, -0.9d);
+                //var topRight = new Point(0.6d, -0.3d);
+                var bottomLeft = new Point(-0.22d, -0.70d);
+                var topRight = new Point(-0.21d, -0.69d);
                 var sourceBuffer = MakeSourceBuffer(
-                    new Rect(x1, y1, x2 - x1, y2 - y1), 
+                    new Rect(bottomLeft, topRight), 
                     _fractalImageWidth,
                     _fractalImageHeight);
                 _writeableBitmap.WritePixels(sourceRect, sourceBuffer, _writeableBitmap.BackBufferStride, 0);
@@ -50,10 +54,10 @@ namespace FractalsWpf
 
         private static int[] MakeSourceBuffer(Rect rect, int pixelWidth, int pixelHeight)
         {
-            const int maxIterations = 40;
+            const int maxIterations = 100;
 
             var realValues = Generate.LinearSpaced(pixelWidth, rect.Left, rect.Right);
-            var imaginaryValues = Generate.LinearSpaced(pixelHeight, rect.Bottom, rect.Top);
+            var imaginaryValues = Generate.LinearSpaced(pixelHeight, rect.Top, rect.Bottom);
 
             var pixels =
                 from imaginary in imaginaryValues
