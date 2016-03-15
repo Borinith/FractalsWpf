@@ -6,7 +6,7 @@ using MathNet.Numerics;
 
 namespace FractalsWpf
 {
-    public class FractalsRegular : IFractals
+    public class FractalsNonGpu : IFractals
     {
         public int[] CreatePixelArray(
             Complex c1,

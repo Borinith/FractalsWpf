@@ -38,11 +38,13 @@ namespace FractalsWpf
                 var bottomLeft = new Complex(-0.22d, -0.70d);
                 var topRight = new Complex(-0.21d, -0.69d);
 
-                const int maxIterations = 255;
+                const int maxIterations = 2048;
                 var colourTable = CreateColourTable(maxIterations);
 
-                IFractals fractals = new FractalsRegular();
-                var pixels = fractals.CreatePixelArray(
+                IFractals fractalsNonGpu = new FractalsNonGpu();
+                //IFractals fractalsGpu = new FractalsGpu();
+
+                var pixels = fractalsNonGpu.CreatePixelArray(
                     bottomLeft,
                     topRight, 
                     colourTable,
