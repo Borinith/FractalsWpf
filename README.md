@@ -16,6 +16,8 @@ This repo is my attempt at exploring fractals in C# / WPF.
 
 ![Screenshot](https://raw.github.com/taylorjg/FractalsWpf/master/Images/Screenshot.png)
 
+![ScreenshotColour](https://raw.github.com/taylorjg/FractalsWpf/master/Images/ScreenshotColour.png)
+
 ## Links
 
 * [Fractal (Wikipedia)](https://en.wikipedia.org/wiki/Fractal)

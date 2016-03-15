@@ -59,11 +59,9 @@ namespace FractalsWpf
                 _kernel.SetValueArgument(1, minImaginary);
                 _kernel.SetValueArgument(2, realDelta);
                 _kernel.SetValueArgument(3, imaginaryDelta);
-                _kernel.SetValueArgument(4, numWidthDivisions);
-                _kernel.SetValueArgument(5, numHeightDivisions);
-                _kernel.SetValueArgument(6, maxIterations);
-                _kernel.SetMemoryArgument(7, bufferColourTable);
-                _kernel.SetMemoryArgument(8, bufferPixels);
+                _kernel.SetValueArgument(4, maxIterations);
+                _kernel.SetMemoryArgument(5, bufferColourTable);
+                _kernel.SetMemoryArgument(6, bufferPixels);
 
                 var globalWorkSize = new long[] { numHeightDivisions, numWidthDivisions };
                 _commandQueue.Execute(_kernel, null, globalWorkSize, null);

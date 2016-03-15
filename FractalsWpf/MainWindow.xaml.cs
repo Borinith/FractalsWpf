@@ -41,10 +41,10 @@ namespace FractalsWpf
                 const int maxIterations = 2048;
                 var colourTable = CreateColourTable(maxIterations);
 
-                IFractals fractalsNonGpu = new FractalsNonGpu();
-                //IFractals fractalsGpu = new FractalsGpu();
+                //IFractals fractals = new FractalsNonGpu();
+                IFractals fractals = new FractalsGpu();
 
-                var pixels = fractalsNonGpu.CreatePixelArray(
+                var pixels = fractals.CreatePixelArray(
                     bottomLeft,
                     topRight, 
                     colourTable,
@@ -60,7 +60,7 @@ namespace FractalsWpf
 
         private static int[] CreateColourTable(int maxIterations)
         {
-            var startColour = Colors.Orange;
+            var startColour = Colors.Violet;
             var stopColour = Colors.Red;
             var start = startColour.ToInt();
             var stop = stopColour.ToInt();
