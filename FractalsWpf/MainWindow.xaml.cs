@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using MathNet.Numerics;
 
 namespace FractalsWpf
 {
@@ -38,9 +38,8 @@ namespace FractalsWpf
                 var bottomLeft = new Complex(-0.22d, -0.70d);
                 var topRight = new Complex(-0.21d, -0.69d);
 
-                const int maxIterations = 100;
-                var colourTable = Enumerable.Repeat(0x00FFFFFF, maxIterations).ToArray();
-                colourTable[maxIterations - 1] = 0x00000000;
+                const int maxIterations = 255;
+                var colourTable = CreateColourTable(maxIterations);
 
                 IFractals fractals = new FractalsRegular();
                 var pixels = fractals.CreatePixelArray(
@@ -55,6 +54,15 @@ namespace FractalsWpf
 
                 FractalImage.Source = writeableBitmap;
             };
+        }
+
+        private static int[] CreateColourTable(int maxIterations)
+        {
+            var startColour = Colors.Orange;
+            var stopColour = Colors.Red;
+            var start = startColour.ToInt();
+            var stop = stopColour.ToInt();
+            return Generate.LinearSpacedMap(maxIterations, start, stop, Convert.ToInt32);
         }
     }
 }
