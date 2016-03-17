@@ -18,7 +18,12 @@ This repo is my attempt at exploring fractals in C# / WPF.
 
 ![ScreenshotColour](https://raw.github.com/taylorjg/FractalsWpf/master/Images/ScreenshotColour.png)
 
+![ScreenshotBarnsleyFern](https://raw.github.com/taylorjg/FractalsWpf/master/Images/ScreenshotBarnsleyFern.png)
+
 ## Links
 
 * [Fractal (Wikipedia)](https://en.wikipedia.org/wiki/Fractal)
+* [Mandelbrot set (Wikipedia)](https://en.wikipedia.org/wiki/Mandelbrot_set)
+* [Julia set (Wikipedia)](https://en.wikipedia.org/wiki/Julia_set)
+* [Barnsley fern (Wikipedia)](https://en.wikipedia.org/wiki/Barnsley_fern)
 * [Make Your Own Mandelbrot](http://makeyourownmandelbrot.blogspot.co.uk/2014/04/book-links.html)

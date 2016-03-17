@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Numerics;
+//using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -35,21 +35,27 @@ namespace FractalsWpf
                 //var bottomLeft = new Complex(-0.0d, -0.9d);
                 //var topRight = new Complex(0.6d, -0.3d);
 
-                var bottomLeft = new Complex(-0.22d, -0.70d);
-                var topRight = new Complex(-0.21d, -0.69d);
+                //var bottomLeft = new Complex(-0.22d, -0.70d);
+                //var topRight = new Complex(-0.21d, -0.69d);
 
-                const int maxIterations = 2048;
-                var colourTable = CreateColourTable(maxIterations);
+                //const int maxIterations = 2048;
+                //var colourTable = CreateColourTable(maxIterations);
 
                 //IFractals fractals = new FractalsNonGpu();
-                IFractals fractals = new FractalsGpu();
+                //IFractals fractals = new FractalsGpu();
 
-                var pixels = fractals.CreatePixelArray(
-                    bottomLeft,
-                    topRight, 
-                    colourTable,
+                //var pixels = fractals.CreatePixelArray(
+                //    bottomLeft,
+                //    topRight,
+                //    colourTable,
+                //    fractalImageWidth,
+                //    fractalImageHeight);
+
+                var pixels = BarnsleyFern.CreatePixelArray(
                     fractalImageWidth,
-                    fractalImageHeight);
+                    fractalImageHeight,
+                    Colors.ForestGreen.ToInt(),
+                    120000);
 
                 var sourceRect = new Int32Rect(0, 0, fractalImageWidth, fractalImageHeight);
                 writeableBitmap.WritePixels(sourceRect, pixels, writeableBitmap.BackBufferStride, 0);
