@@ -1,4 +1,4 @@
-﻿kernel void CreatePixelArray(
+﻿kernel void CreateMandelbrotSetPixelArray(
 	float minReal,
 	float minImaginary,
 	float realDelta,

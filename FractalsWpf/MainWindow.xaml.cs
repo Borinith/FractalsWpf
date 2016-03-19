@@ -1,5 +1,5 @@
 ﻿using System;
-//using System.Numerics;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -26,6 +26,9 @@ namespace FractalsWpf
                     PixelFormats.Bgr32,
                     null);
 
+                var bottomLeft = new Complex(-2d, -2d);
+                var topRight = new Complex(2d, 2d);
+
                 //var bottomLeft = new Complex(-2.25d, -1.5d);
                 //var topRight = new Complex(0.75d, 1.5d);
 
@@ -38,24 +41,26 @@ namespace FractalsWpf
                 //var bottomLeft = new Complex(-0.22d, -0.70d);
                 //var topRight = new Complex(-0.21d, -0.69d);
 
-                //const int maxIterations = 2048;
-                //var colourTable = CreateColourTable(maxIterations);
+                const int maxIterations = 512;
+                var colourTable = CreateColourTable(maxIterations);
 
-                //IFractals fractals = new FractalsNonGpu();
-                //IFractals fractals = new FractalsGpu();
+                //IFractals fractals = new MandelbrotSetNonGpu();
+                //IFractals fractals = new MandelbrotSetGpu();
+                IFractals fractals = new JuliaSetNonGpu();
 
-                //var pixels = fractals.CreatePixelArray(
-                //    bottomLeft,
-                //    topRight,
-                //    colourTable,
-                //    fractalImageWidth,
-                //    fractalImageHeight);
-
-                var pixels = BarnsleyFern.CreatePixelArray(
+                 var pixels = fractals.CreatePixelArray(
+                    new Complex(-0.35, 0.65), 
+                    bottomLeft,
+                    topRight,
+                    colourTable,
                     fractalImageWidth,
-                    fractalImageHeight,
-                    Colors.ForestGreen.ToInt(),
-                    120000);
+                    fractalImageHeight);
+
+                //var pixels = BarnsleyFern.CreatePixelArray(
+                //    fractalImageWidth,
+                //    fractalImageHeight,
+                //    Colors.ForestGreen.ToInt(),
+                //    10000000);
 
                 var sourceRect = new Int32Rect(0, 0, fractalImageWidth, fractalImageHeight);
                 writeableBitmap.WritePixels(sourceRect, pixels, writeableBitmap.BackBufferStride, 0);

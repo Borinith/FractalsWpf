@@ -123,8 +123,9 @@
     </Compile>
     <Compile Include="BarnsleyFern.cs" />
     <Compile Include="ColorExtensions.cs" />
-    <Compile Include="FractalsGpu.cs" />
-    <Compile Include="FractalsNonGpu.cs" />
+    <Compile Include="MandelbrotSetGpu.cs" />
+    <Compile Include="JuliaSetNonGpu.cs" />
+    <Compile Include="MandelbrotSetNonGpu.cs" />
     <Compile Include="PinnedObject.cs" />
     <Compile Include="IFractals.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -150,7 +151,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="fractals.cl" />
+    <EmbeddedResource Include="CreateMandelbrotSetPixelArray.cl" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

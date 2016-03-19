@@ -8,13 +8,13 @@ using OpenCL;
 
 namespace FractalsWpf
 {
-    class FractalsGpu : IFractals, IDisposable
+    class MandelbrotSetGpu : IFractals, IDisposable
     {
         private readonly OpenCLContext _context;
         private readonly OpenCLCommandQueue _commandQueue;
         private readonly OpenCLKernel _kernel;
 
-        public FractalsGpu()
+        public MandelbrotSetGpu()
         {
             var platform = OpenCLPlatform.Platforms.FirstOrDefault(p => p.Vendor.Contains("NVIDIA"));
             _context = new OpenCLContext(
@@ -24,11 +24,12 @@ namespace FractalsWpf
                 IntPtr.Zero);
             var device = _context.Devices.First();
             _commandQueue = new OpenCLCommandQueue(_context, device, OpenCLCommandQueueProperties.None);
-            var program = LoadProgram(_context, device, "FractalsWpf.fractals.cl");
-            _kernel = program.CreateKernel("CreatePixelArray");
+            var program = LoadProgram(_context, device, "FractalsWpf.CreateMandelbrotSetPixelArray.cl");
+            _kernel = program.CreateKernel("CreateMandelbrotSetPixelArray");
         }
 
         public int[] CreatePixelArray(
+            Complex _,
             Complex c1,
             Complex c2,
             IReadOnlyList<int> colourTable,

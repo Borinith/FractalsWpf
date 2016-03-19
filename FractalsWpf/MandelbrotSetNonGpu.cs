@@ -6,9 +6,10 @@ using MathNet.Numerics;
 
 namespace FractalsWpf
 {
-    public class FractalsNonGpu : IFractals
+    public class MandelbrotSetNonGpu : IFractals
     {
         public int[] CreatePixelArray(
+            Complex _,
             Complex c1,
             Complex c2,
             IReadOnlyList<int> colourTable,
@@ -26,16 +27,16 @@ namespace FractalsWpf
             var pixels =
                 from imaginary in imaginaryValues
                 from real in realValues
-                let c = new Complex(real, imaginary)
-                let i = CalculateMandelbrotDivergenceIteration(c, maxIterations)
-                select colourTable[i];
+                let pt = new Complex(real, imaginary)
+                let iter = BeginsToDivergeAt(pt, maxIterations)
+                select colourTable[iter];
 
             return pixels.ToArray();
         }
 
-        private static int CalculateMandelbrotDivergenceIteration(Complex c, int maxIterations)
+        private static int BeginsToDivergeAt(Complex c, int maxIterations)
         {
-            var z = new Complex(0d, 0d);
+            var z = Complex.Zero;
 
             foreach (var iterations in Enumerable.Range(0, maxIterations))
             {
