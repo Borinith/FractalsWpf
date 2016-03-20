@@ -43,22 +43,22 @@ namespace FractalsWpf
                 //var bottomLeft = new Complex(-0.22d, -0.70d);
                 //var topRight = new Complex(-0.21d, -0.69d);
 
-                const int maxIterations = 1000;
+                const int maxIterations = 40;
                 var colourTable = CreateColourTable(maxIterations);
 
                 IFractals fractals = new MandelbrotSetNonGpu();
                 //IFractals fractals = new MandelbrotSetGpu();
                 //IFractals fractals = new JuliaSetNonGpu();
 
-                var tmp = Jet(256);
-
-                var pixels = fractals.CreatePixelArray(
+                var iters = fractals.CreatePixelArray(
                     new Complex(-0.35, 0.65), 
                     bottomLeft,
                     topRight,
                     colourTable,
                     fractalImageWidth,
                     fractalImageHeight);
+
+                var pixels = ItersToPixels(iters);
 
                 //var pixels = BarnsleyFern.CreatePixelArray(
                 //    fractalImageWidth,
@@ -80,6 +80,17 @@ namespace FractalsWpf
             var start = startColour.ToInt();
             var stop = stopColour.ToInt();
             return Generate.LinearSpacedMap(maxIterations, start, stop, Convert.ToInt32);
+        }
+
+        private static int[] ItersToPixels(int[] iters)
+        {
+            var vmin = (double)iters.Min();
+            var vmax = (double)iters.Max();
+            var divisor = vmax - vmin;
+            var normalisedIters = iters.Select(p => (p - vmin) / divisor).ToArray();
+
+            var cmap = Jet(256);
+            return normalisedIters.Select(p => cmap[(int)Math.Floor(p * 255)]).ToArray();
         }
 
         private static int[] Jet(int n)
