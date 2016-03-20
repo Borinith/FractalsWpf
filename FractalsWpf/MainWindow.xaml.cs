@@ -28,11 +28,11 @@ namespace FractalsWpf
                     PixelFormats.Bgr32,
                     null);
 
-                //var bottomLeft = new Complex(-2d, -2d);
-                //var topRight = new Complex(2d, 2d);
+                var bottomLeft = new Complex(-2d, -2d);
+                var topRight = new Complex(2d, 2d);
 
-                var bottomLeft = new Complex(-2.25d, -1.5d);
-                var topRight = new Complex(0.75d, 1.5d);
+                //var bottomLeft = new Complex(-2.25d, -1.5d);
+                //var topRight = new Complex(0.75d, 1.5d);
 
                 //var bottomLeft = new Complex(-1.5d, -0.5d);
                 //var topRight = new Complex(-0.5d, 0.5d);
@@ -43,12 +43,12 @@ namespace FractalsWpf
                 //var bottomLeft = new Complex(-0.22d, -0.70d);
                 //var topRight = new Complex(-0.21d, -0.69d);
 
-                const int maxIterations = 40;
+                const int maxIterations = 120;
                 var colourTable = CreateColourTable(maxIterations);
 
-                IFractals fractals = new MandelbrotSetNonGpu();
+                //IFractals fractals = new MandelbrotSetNonGpu();
                 //IFractals fractals = new MandelbrotSetGpu();
-                //IFractals fractals = new JuliaSetNonGpu();
+                IFractals fractals = new JuliaSetNonGpu();
 
                 var iters = fractals.CreatePixelArray(
                     new Complex(-0.35, 0.65), 
@@ -137,9 +137,9 @@ namespace FractalsWpf
             return Enumerable.Range(0, n)
                 .Select(index =>
                 {
-                    var r = (int)Math.Floor(rs[index] * n);
-                    var g = (int)Math.Floor(gs[index] * n);
-                    var b = (int)Math.Floor(bs[index] * n);
+                    var r = (int)Math.Floor(rs[index] * (n - 1));
+                    var g = (int)Math.Floor(gs[index] * (n - 1));
+                    var b = (int)Math.Floor(bs[index] * (n - 1));
                     return r << 16 | g << 8 | b;
                 }).ToArray();
         }

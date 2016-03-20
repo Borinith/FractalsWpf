@@ -29,7 +29,8 @@ namespace FractalsWpf
                 from real in realValues
                 let pt = new Complex(real, imaginary)
                 let iter = BeginsToDivergeAt(c, pt, maxIterations)
-                select colourTable[iter];
+                //select colourTable[iter];
+                select iter;
 
             return pixels.ToArray();
         }
