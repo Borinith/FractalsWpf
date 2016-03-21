@@ -128,6 +128,7 @@
     <Compile Include="MandelbrotSetGpu.cs" />
     <Compile Include="JuliaSet.cs" />
     <Compile Include="MandelbrotSet.cs" />
+    <Compile Include="OpenCLRunner.cs" />
     <Compile Include="PinnedObject.cs" />
     <Compile Include="IFractals.cs" />
     <Compile Include="MainWindow.xaml.cs">
