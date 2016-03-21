@@ -126,8 +126,8 @@
     <Compile Include="ColourMaps.cs" />
     <Compile Include="ColourMapDataDictionary.cs" />
     <Compile Include="MandelbrotSetGpu.cs" />
-    <Compile Include="JuliaSetNonGpu.cs" />
-    <Compile Include="MandelbrotSetNonGpu.cs" />
+    <Compile Include="JuliaSet.cs" />
+    <Compile Include="MandelbrotSet.cs" />
     <Compile Include="PinnedObject.cs" />
     <Compile Include="IFractals.cs" />
     <Compile Include="MainWindow.xaml.cs">

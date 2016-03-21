@@ -5,10 +5,10 @@ using MathNet.Numerics;
 
 namespace FractalsWpf
 {
-    public class MandelbrotSetNonGpu : IFractals
+    public class JuliaSet : IFractals
     {
         public int[] CreatePixelArray(
-            Complex _,
+            Complex c,
             Complex c1,
             Complex c2,
             int maxIterations,
@@ -22,19 +22,17 @@ namespace FractalsWpf
             var realValues = Generate.LinearSpaced(numWidthDivisions, minReal, maxReal);
             var imaginaryValues = Generate.LinearSpaced(numHeightDivisions, minImaginary, maxImaginary);
 
-            var results =
+            var pixels =
                 from imaginary in imaginaryValues
                 from real in realValues
                 let pt = new Complex(real, imaginary)
-                select BeginsToDivergeAt(pt, maxIterations);
+                select BeginsToDivergeAt(c, pt, maxIterations);
 
-            return results.ToArray();
+            return pixels.ToArray();
         }
 
-        private static int BeginsToDivergeAt(Complex c, int maxIterations)
+        private static int BeginsToDivergeAt(Complex c, Complex z, int maxIterations)
         {
-            var z = Complex.Zero;
-
             foreach (var iterations in Enumerable.Range(0, maxIterations))
             {
                 z = z * z + c;
