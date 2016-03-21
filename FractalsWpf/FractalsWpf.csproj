@@ -123,6 +123,8 @@
     </Compile>
     <Compile Include="BarnsleyFern.cs" />
     <Compile Include="ColorExtensions.cs" />
+    <Compile Include="ColourMaps.cs" />
+    <Compile Include="ColourMapDataDictionary.cs" />
     <Compile Include="MandelbrotSetGpu.cs" />
     <Compile Include="JuliaSetNonGpu.cs" />
     <Compile Include="MandelbrotSetNonGpu.cs" />
