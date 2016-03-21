@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Windows;
@@ -10,6 +11,7 @@ namespace FractalsWpf
     public partial class MainWindow
     {
         private static readonly int[] ColourMap = ColourMaps.GetColourMap("jet");
+        private IFractals _mandelbrotSetGpu = new MandelbrotSetGpu();
 
         public MainWindow()
         {
@@ -31,8 +33,8 @@ namespace FractalsWpf
                 //var bottomLeft = new Complex(-2d, -2d);
                 //var topRight = new Complex(2d, 2d);
 
-                var bottomLeft = new Complex(-2.25d, -1.5d);
-                var topRight = new Complex(0.75d, 1.5d);
+                //var bottomLeft = new Complex(-2.25d, -1.5d);
+                //var topRight = new Complex(0.75d, 1.5d);
 
                 //var bottomLeft = new Complex(-1.5d, -0.5d);
                 //var topRight = new Complex(-0.5d, 0.5d);
@@ -40,22 +42,29 @@ namespace FractalsWpf
                 //var bottomLeft = new Complex(-0.0d, -0.9d);
                 //var topRight = new Complex(0.6d, -0.3d);
 
-                //var bottomLeft = new Complex(-0.22d, -0.70d);
-                //var topRight = new Complex(-0.21d, -0.69d);
+                var bottomLeft = new Complex(-0.22d, -0.70d);
+                var topRight = new Complex(-0.21d, -0.69d);
 
-                const int maxIterations = 40;
+                const int maxIterations = 120;
 
-                IFractals fractals = new MandelbrotSetNonGpu();
-                //IFractals fractals = new MandelbrotSetGpu();
-                //IFractals fractals = new JuliaSetNonGpu();
+                IFractals mandelbrotSetNonGpu = new MandelbrotSetNonGpu();
+                IFractals juliaSetNonGpu = new JuliaSetNonGpu();
 
-                var values = fractals.CreatePixelArray(
-                    new Complex(-0.35, 0.65), 
+                //IFractals fractals = mandelbrotSetNonGpu;
+                IFractals fractals = _mandelbrotSetGpu;
+                //IFractals fractals = juliaSetNonGpu;
+
+                var tuple = TimeIt(() => fractals.CreatePixelArray(
+                    new Complex(-0.35, 0.65),
                     bottomLeft,
                     topRight,
                     maxIterations,
                     fractalImageWidth,
-                    fractalImageHeight);
+                    fractalImageHeight));
+
+                var values = tuple.Item1;
+                var elapsed = tuple.Item2;
+                StatusBarText.Text = $"{fractals.GetType().Name}: {elapsed}";
 
                 //var pixels = BarnsleyFern.CreatePixelArray(
                 //    fractalImageWidth,
@@ -79,6 +88,14 @@ namespace FractalsWpf
             var divisor = vmax - vmin;
             var normalisedValues = values.Select(p => (p - vmin) / divisor).ToArray();
             return normalisedValues.Select(p => ColourMap[(int)Math.Floor(p * 255)]).ToArray();
+        }
+
+        private static Tuple<T, TimeSpan> TimeIt<T>(Func<T> f)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            var result = f();
+            stopwatch.Stop();
+            return Tuple.Create(result, stopwatch.Elapsed);
         }
     }
 }

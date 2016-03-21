@@ -7,7 +7,19 @@
         ResizeMode="NoResize">
     
     <Grid x:Name="Grid">
-        <Image x:Name="FractalImage" Stretch="None" />
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Image Grid.Row="0" x:Name="FractalImage" Stretch="None" />
+        
+        <StatusBar Grid.Row="1" Margin="0">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusBarText" />
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
     
 </Window>
