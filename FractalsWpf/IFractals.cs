@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace FractalsWpf
 {
@@ -9,7 +8,7 @@ namespace FractalsWpf
             Complex constant,
             Complex c1,
             Complex c2,
-            IReadOnlyList<int> colourTable,
+            int maxIterations,
             int numWidthDivisions,
             int numHeightDivisions);
     }

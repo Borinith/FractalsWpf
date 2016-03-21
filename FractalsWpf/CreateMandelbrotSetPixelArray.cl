@@ -4,14 +4,11 @@
 	float realDelta,
 	float imaginaryDelta,
 	int maxIterations,
-	global const int* colourTable,
-	global int* pixels)
+	global int* results)
 {
 	int gid0 = get_global_id(0);
 	int gid1 = get_global_id(1);
-
-	int h = get_global_size(0);
-	int w = get_global_size(1);
+	int width = get_global_size(1);
 
 	float zr = 0.0f;
 	float zi = 0.0f;
@@ -21,16 +18,16 @@
 
 	int iter = 0;
 
-	for (; iter < maxIterations - 1; ++iter)
+	for (; iter < maxIterations; ++iter)
 	{
-		float z2r = ((zr * zr) - (zi * zi)) + cr;
-		float z2i = (2 * (zr * zi)) + ci;
+		float zrNext = ((zr * zr) - (zi * zi)) + cr;
+		float ziNext = (2 * zr * zi) + ci;
 
-		if (z2r * z2r + z2i * z2i >= 4.0f) break;
+		if (zrNext * zrNext + ziNext * ziNext >= 4.0f) break;
 
-		zr = z2r;
-		zi = z2i;
+		zr = zrNext;
+		zi = ziNext;
 	}
 
-	pixels[gid0 * w + gid1] = colourTable[iter];
+	results[gid0 * width + gid1] = iter;
 }

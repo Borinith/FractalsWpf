@@ -12,7 +12,7 @@ namespace FractalsWpf
             Complex c,
             Complex c1,
             Complex c2,
-            IReadOnlyList<int> colourTable,
+            int maxIterations,
             int numWidthDivisions,
             int numHeightDivisions)
         {
@@ -22,15 +22,12 @@ namespace FractalsWpf
             var maxImaginary = Math.Max(c1.Imaginary, c2.Imaginary);
             var realValues = Generate.LinearSpaced(numWidthDivisions, minReal, maxReal);
             var imaginaryValues = Generate.LinearSpaced(numHeightDivisions, minImaginary, maxImaginary);
-            var maxIterations = colourTable.Count - 1;
 
             var pixels =
                 from imaginary in imaginaryValues
                 from real in realValues
                 let pt = new Complex(real, imaginary)
-                let iter = BeginsToDivergeAt(c, pt, maxIterations)
-                //select colourTable[iter];
-                select iter;
+                select BeginsToDivergeAt(c, pt, maxIterations);
 
             return pixels.ToArray();
         }

@@ -5,7 +5,6 @@ using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using MathNet.Numerics;
 
 namespace FractalsWpf
 {
@@ -28,11 +27,11 @@ namespace FractalsWpf
                     PixelFormats.Bgr32,
                     null);
 
-                var bottomLeft = new Complex(-2d, -2d);
-                var topRight = new Complex(2d, 2d);
+                //var bottomLeft = new Complex(-2d, -2d);
+                //var topRight = new Complex(2d, 2d);
 
-                //var bottomLeft = new Complex(-2.25d, -1.5d);
-                //var topRight = new Complex(0.75d, 1.5d);
+                var bottomLeft = new Complex(-2.25d, -1.5d);
+                var topRight = new Complex(0.75d, 1.5d);
 
                 //var bottomLeft = new Complex(-1.5d, -0.5d);
                 //var topRight = new Complex(-0.5d, 0.5d);
@@ -43,18 +42,17 @@ namespace FractalsWpf
                 //var bottomLeft = new Complex(-0.22d, -0.70d);
                 //var topRight = new Complex(-0.21d, -0.69d);
 
-                const int maxIterations = 120;
-                var colourTable = CreateColourTable(maxIterations);
+                const int maxIterations = 40;
 
-                //IFractals fractals = new MandelbrotSetNonGpu();
+                IFractals fractals = new MandelbrotSetNonGpu();
                 //IFractals fractals = new MandelbrotSetGpu();
-                IFractals fractals = new JuliaSetNonGpu();
+                //IFractals fractals = new JuliaSetNonGpu();
 
                 var iters = fractals.CreatePixelArray(
                     new Complex(-0.35, 0.65), 
                     bottomLeft,
                     topRight,
-                    colourTable,
+                    maxIterations,
                     fractalImageWidth,
                     fractalImageHeight);
 
@@ -71,15 +69,6 @@ namespace FractalsWpf
 
                 FractalImage.Source = writeableBitmap;
             };
-        }
-
-        private static int[] CreateColourTable(int maxIterations)
-        {
-            var startColour = Colors.Red;
-            var stopColour = Colors.Violet;
-            var start = startColour.ToInt();
-            var stop = stopColour.ToInt();
-            return Generate.LinearSpacedMap(maxIterations, start, stop, Convert.ToInt32);
         }
 
         private static int[] ItersToPixels(int[] iters)

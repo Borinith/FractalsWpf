@@ -32,7 +32,7 @@ namespace FractalsWpf
             Complex _,
             Complex c1,
             Complex c2,
-            IReadOnlyList<int> colourTable,
+            int maxIterations,
             int numWidthDivisions,
             int numHeightDivisions)
         {
@@ -40,36 +40,36 @@ namespace FractalsWpf
             var maxReal = (float)Math.Max(c1.Real, c2.Real);
             var minImaginary = (float)Math.Min(c1.Imaginary, c2.Imaginary);
             var maxImaginary = (float)Math.Max(c1.Imaginary, c2.Imaginary);
-            var realDelta = (maxReal - minReal)/numWidthDivisions;
-            var imaginaryDelta = (maxImaginary - minImaginary)/numHeightDivisions;
-            var maxIterations = colourTable.Count;
+            var realDelta = (maxReal - minReal)/(numWidthDivisions - 1);
+            var imaginaryDelta = (maxImaginary - minImaginary)/(numHeightDivisions - 1);
 
-            const OpenCLMemoryFlags flags1 = OpenCLMemoryFlags.ReadOnly | OpenCLMemoryFlags.UseHostPointer;
-            const OpenCLMemoryFlags flags2 = OpenCLMemoryFlags.WriteOnly | OpenCLMemoryFlags.AllocateHostPointer;
-            var count1 = new long[] { maxIterations };
-            var count2 = new long[] { numWidthDivisions * numHeightDivisions };
-            var intType = typeof (int);
-            var pixels = new int[count2[0]];
+            var numResults = numWidthDivisions * numHeightDivisions;
+            var results = new int[numResults];
 
-            using (var pinnedColourTable = new PinnedObject(colourTable))
-            using (var pinnedPixels = new PinnedObject(pixels))
-            using (var bufferColourTable = new OpenCLBuffer(_context, flags1, intType, count1, pinnedColourTable))
-            using (var bufferPixels = new OpenCLBuffer(_context, flags2, intType, count2))
+            const OpenCLMemoryFlags bufferFlags = OpenCLMemoryFlags.WriteOnly | OpenCLMemoryFlags.AllocateHostPointer;
+            var bufferCount = new long[] {numResults};
+            var bufferElementType = typeof (int);
+
+            using (var resultsBuffer = new OpenCLBuffer(_context, bufferFlags, bufferElementType, bufferCount))
             {
                 _kernel.SetValueArgument(0, minReal);
                 _kernel.SetValueArgument(1, minImaginary);
                 _kernel.SetValueArgument(2, realDelta);
                 _kernel.SetValueArgument(3, imaginaryDelta);
                 _kernel.SetValueArgument(4, maxIterations);
-                _kernel.SetMemoryArgument(5, bufferColourTable);
-                _kernel.SetMemoryArgument(6, bufferPixels);
+                _kernel.SetMemoryArgument(5, resultsBuffer);
 
                 var globalWorkSize = new long[] { numHeightDivisions, numWidthDivisions };
                 _commandQueue.Execute(_kernel, null, globalWorkSize, null);
-                _commandQueue.ReadFromBuffer(bufferPixels, pinnedPixels, true, 0L, pixels.Length);
+
+                using (var resultsHandle = new PinnedObject(results))
+                {
+                    _commandQueue.ReadFromBuffer(resultsBuffer, resultsHandle, true, 0L, numResults);
+                }
+
                 _commandQueue.Finish();
 
-                return pixels;
+                return results;
             }
         }
 
