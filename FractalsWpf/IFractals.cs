@@ -1,8 +1,9 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace FractalsWpf
 {
-    public interface IFractals
+    public interface IFractals : IDisposable
     {
         ushort[] CreatePixelArray(
             Complex constant,

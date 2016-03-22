@@ -31,6 +31,10 @@ namespace FractalsWpf
             return pixels.ToArray();
         }
 
+        public void Dispose()
+        {
+        }
+
         private static ushort BeginsToDivergeAt(Complex c, Complex z, int maxIterations)
         {
             foreach (var iterations in Enumerable.Range(0, maxIterations))

@@ -136,6 +136,11 @@ namespace FractalsWpf
             };
 
             RenderBtn.Click += (_, __) => { Render(); };
+
+            Closed += (_, __) =>
+            {
+                _fractals.Dispose();
+            };
         }
 
         public int MaxIterations

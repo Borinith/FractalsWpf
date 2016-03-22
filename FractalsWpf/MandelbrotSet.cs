@@ -31,6 +31,10 @@ namespace FractalsWpf
             return results.ToArray();
         }
 
+        public void Dispose()
+        {
+        }
+
         private static ushort BeginsToDivergeAt(Complex c, int maxIterations)
         {
             var z = Complex.Zero;
