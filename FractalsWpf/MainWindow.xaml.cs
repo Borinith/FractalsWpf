@@ -1,85 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace FractalsWpf
 {
-    public partial class MainWindow
+    public sealed partial class MainWindow : INotifyPropertyChanged
     {
         private static readonly int[] ColourMap = ColourMaps.GetColourMap("jet");
-        private readonly IFractals _mandelbrotSet = new MandelbrotSet();
+        //private readonly IFractals _mandelbrotSet = new MandelbrotSet();
         private readonly IFractals _mandelbrotSetGpu = new MandelbrotSetGpu();
-        private readonly IFractals _juliaSet = new JuliaSet();
+        //private readonly IFractals _juliaSet = new JuliaSet();
+        private int _fractalImageWidth;
+        private int _fractalImageHeight;
+        private WriteableBitmap _writeableBitmap;
+        private int _maxIterations;
+        private Complex _bottomLeft;
+        private Complex _topRight;
+        private IFractals _fractals;
 
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
 
             ContentRendered += (_, __) =>
             {
-                var fractalImageWidth = (int)Math.Round(Grid.ActualWidth);
-                var fractalImageHeight = (int)Math.Round(Grid.ActualHeight);
+                _fractalImageWidth = (int)Math.Round(FractalImageWrapper.ActualWidth);
+                _fractalImageHeight = (int)Math.Round(FractalImageWrapper.ActualHeight);
 
-                var writeableBitmap = new WriteableBitmap(
-                    fractalImageWidth,
-                    fractalImageHeight,
+                _writeableBitmap = new WriteableBitmap(
+                    _fractalImageWidth,
+                    _fractalImageHeight,
                     96,
                     96,
                     PixelFormats.Bgr32,
                     null);
 
-                //var bottomLeft = new Complex(-2d, -2d);
-                //var topRight = new Complex(2d, 2d);
+                FractalImage.Source = _writeableBitmap;
 
-                //var bottomLeft = new Complex(-2.25d, -1.5d);
-                //var topRight = new Complex(0.75d, 1.5d);
+                MaxIterations = 120;
 
-                //var bottomLeft = new Complex(-1.5d, -0.5d);
-                //var topRight = new Complex(-0.5d, 0.5d);
+                //_bottomLeft = new Complex(-2d, -2d);
+                //_topRight = new Complex(2d, 2d);
 
-                //var bottomLeft = new Complex(-0.0d, -0.9d);
-                //var topRight = new Complex(0.6d, -0.3d);
+                //var _bottomLeft = new Complex(-2.25d, -1.5d);
+                //var _topRight = new Complex(0.75d, 1.5d);
 
-                var bottomLeft = new Complex(-0.22d, -0.70d);
-                var topRight = new Complex(-0.21d, -0.69d);
+                //var _bottomLeft = new Complex(-1.5d, -0.5d);
+                //var _topRight = new Complex(-0.5d, 0.5d);
 
-                const int maxIterations = 120;
+                //var _bottomLeft = new Complex(-0.0d, -0.9d);
+                //var _topRight = new Complex(0.6d, -0.3d);
 
-                var fractals =
-                    //_mandelbrotSetNonGpu;
-                    _mandelbrotSetGpu;
-                //_juliaSet;
+                _bottomLeft = new Complex(-0.22d, -0.70d);
+                _topRight = new Complex(-0.21d, -0.69d);
 
-                var tuple = TimeIt(() => fractals.CreatePixelArray(
-                    new Complex(-0.35, 0.65),
-                    bottomLeft,
-                    topRight,
-                    maxIterations,
-                    fractalImageWidth,
-                    fractalImageHeight));
+                _fractals = _mandelbrotSetGpu;
 
-                var values = tuple.Item1;
-                var elapsed = tuple.Item2;
-                StatusBarText.Text = $"{fractals.GetType().Name}: {elapsed}";
-
-                //var pixels = BarnsleyFern.CreatePixelArray(
-                //    fractalImageWidth,
-                //    fractalImageHeight,
-                //    Colors.ForestGreen.ToInt(),
-                //    10000000);
-
-                var pixels = ValuesToPixels(values, ColourMap);
-
-                var sourceRect = new Int32Rect(0, 0, fractalImageWidth, fractalImageHeight);
-                writeableBitmap.WritePixels(sourceRect, pixels, writeableBitmap.BackBufferStride, 0);
-
-                FractalImage.Source = writeableBitmap;
+                Render();
             };
+
+            ZoomInBtn.Click += (_, __) =>
+            {
+                var w = _topRight.Real - _bottomLeft.Real;
+                var h = _topRight.Imaginary - _bottomLeft.Imaginary;
+                var dw = w/4;
+                var dh = h/4;
+                _bottomLeft = new Complex(_bottomLeft.Real + dw, _bottomLeft.Imaginary + dh);
+                _topRight = new Complex(_topRight.Real - dw, _topRight.Imaginary - dh);
+                Render();
+            };
+
+            ZoomOutBtn.Click += (_, __) =>
+            {
+                var w = _topRight.Real - _bottomLeft.Real;
+                var h = _topRight.Imaginary - _bottomLeft.Imaginary;
+                var dw = w/2;
+                var dh = h/2;
+                _bottomLeft = new Complex(_bottomLeft.Real - dw, _bottomLeft.Imaginary - dh);
+                _topRight = new Complex(_topRight.Real + dw, _topRight.Imaginary + dh);
+                Render();
+            };
+
+            RenderBtn.Click += (_, __) => { Render(); };
+        }
+
+        private void Render()
+        {
+            var tuple = TimeIt(() => _fractals.CreatePixelArray(
+                new Complex(-0.35, 0.65),
+                _bottomLeft,
+                _topRight,
+                MaxIterations,
+                _fractalImageWidth,
+                _fractalImageHeight));
+
+            var values = tuple.Item1;
+            var elapsed = tuple.Item2;
+            StatusBarText.Text = $"{_fractals.GetType().Name}: {elapsed}";
+
+            //var pixels = BarnsleyFern.CreatePixelArray(
+            //    fractalImageWidth,
+            //    fractalImageHeight,
+            //    Colors.ForestGreen.ToInt(),
+            //    10000000);
+
+            var pixels = ValuesToPixels(values, ColourMap);
+
+            var sourceRect = new Int32Rect(0, 0, _fractalImageWidth, _fractalImageHeight);
+            _writeableBitmap.WritePixels(sourceRect, pixels, _writeableBitmap.BackBufferStride, 0);
         }
 
         private static int[] ValuesToPixels(int[] values, IReadOnlyList<int> colourMap)
@@ -101,6 +137,23 @@ namespace FractalsWpf
             var result = f();
             stopwatch.Stop();
             return Tuple.Create(result, stopwatch.Elapsed);
+        }
+
+        public int MaxIterations
+        {
+            get { return _maxIterations; }
+            set
+            {
+                _maxIterations = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

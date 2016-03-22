@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Fractals"
         Height="600"
-        Width="600"
+        Width="800"
+        WindowState="Maximized"
         ResizeMode="NoResize">
     
     <Grid x:Name="Grid">
@@ -12,10 +13,29 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-
-        <Image Grid.Row="0" x:Name="FractalImage" Stretch="None" />
         
-        <StatusBar Grid.Row="1" Margin="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" Grid.Column="0" x:Name="FractalImageWrapper"
+              Margin="10"
+              Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
+            <Image x:Name="FractalImage" Stretch="None" />
+        </Grid>
+        
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+            <Label>Max iterations:</Label>
+            <TextBox Text="{Binding Path=MaxIterations}" Margin="0,0,10,10"></TextBox>
+            <Button x:Name="ZoomInBtn" Margin="0,0,10,10" Width="80">Zoom In</Button>
+            <Button x:Name="ZoomOutBtn" Margin="0,0,10,10" Width="80">Zoom Out</Button>
+            <Button x:Name="RenderBtn" Margin="0,0,10,10" Width="80">Render</Button>
+        </StackPanel>
+        
+        <StatusBar Grid.Row="1" Grid.Column="1" Margin="0">
             <StatusBarItem>
                 <TextBlock x:Name="StatusBarText" />
             </StatusBarItem>
