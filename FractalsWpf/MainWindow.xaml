@@ -29,9 +29,11 @@
         
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
             <Label>Max iterations:</Label>
-            <TextBox Text="{Binding Path=MaxIterations}" Margin="0,0,10,10"></TextBox>
+            <TextBox Text="{Binding Path=MaxIterations}" Margin="0,0,10,10" />
+            <Slider x:Name="MaxIterationsSlider" Orientation="Vertical" Minimum="10" Maximum="4096" Value="{Binding Path=MaxIterations}" Height="400" />
             <Button x:Name="ZoomInBtn" Margin="0,0,10,10" Width="80">Zoom In</Button>
             <Button x:Name="ZoomOutBtn" Margin="0,0,10,10" Width="80">Zoom Out</Button>
+            <!--<Slider x:Name="ZoomSlider" Orientation="Vertical" Minimum="1" Maximum="100" Value="{Binding Path=ZoomLevel}" Height="400" />-->
             <Button x:Name="RenderBtn" Margin="0,0,10,10" Width="80">Render</Button>
         </StackPanel>
         

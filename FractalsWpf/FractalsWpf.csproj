@@ -125,6 +125,7 @@
     <Compile Include="ColorExtensions.cs" />
     <Compile Include="ColourMaps.cs" />
     <Compile Include="ColourMapDataDictionary.cs" />
+    <Compile Include="JuliaSetGpu.cs" />
     <Compile Include="MandelbrotSetGpu.cs" />
     <Compile Include="JuliaSet.cs" />
     <Compile Include="MandelbrotSet.cs" />
@@ -155,6 +156,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="CreateMandelbrotSetPixelArray.cl" />
+    <EmbeddedResource Include="CreateJuliaSetPixelArray.cl" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

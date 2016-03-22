@@ -4,19 +4,19 @@ using OpenCL;
 
 namespace FractalsWpf
 {
-    class MandelbrotSetGpu : IFractals, IDisposable
+    class JuliaSetGpu : IFractals, IDisposable
     {
         private readonly OpenCLRunner _runner;
 
-        public MandelbrotSetGpu()
+        public JuliaSetGpu()
         {
             _runner = new OpenCLRunner(
-                "FractalsWpf.CreateMandelbrotSetPixelArray.cl",
-                "CreateMandelbrotSetPixelArray");
+                "FractalsWpf.CreateJuliaSetPixelArray.cl",
+                "CreateJuliaSetPixelArray");
         }
 
         public int[] CreatePixelArray(
-            Complex _,
+            Complex c,
             Complex c1,
             Complex c2,
             int maxIterations,
@@ -37,12 +37,14 @@ namespace FractalsWpf
 
             using (var resultsBuffer = new OpenCLBuffer(_runner.Context, bufferFlags, bufferElementType, bufferCount))
             {
-                _runner.Kernel.SetValueArgument(0, minReal);
-                _runner.Kernel.SetValueArgument(1, minImaginary);
-                _runner.Kernel.SetValueArgument(2, realDelta);
-                _runner.Kernel.SetValueArgument(3, imaginaryDelta);
-                _runner.Kernel.SetValueArgument(4, maxIterations);
-                _runner.Kernel.SetMemoryArgument(5, resultsBuffer);
+                _runner.Kernel.SetValueArgument(0, (float)c.Real);
+                _runner.Kernel.SetValueArgument(1, (float)c.Imaginary);
+                _runner.Kernel.SetValueArgument(2, minReal);
+                _runner.Kernel.SetValueArgument(3, minImaginary);
+                _runner.Kernel.SetValueArgument(4, realDelta);
+                _runner.Kernel.SetValueArgument(5, imaginaryDelta);
+                _runner.Kernel.SetValueArgument(6, maxIterations);
+                _runner.Kernel.SetMemoryArgument(7, resultsBuffer);
 
                 var globalWorkSize = new long[] { numHeightDivisions, numWidthDivisions };
                 _runner.CommandQueue.Execute(_runner.Kernel, null, globalWorkSize, null);
