@@ -49,18 +49,19 @@ namespace FractalsWpf
                 FractalImage.Source = _writeableBitmap;
 
                 MaxIterations = 120;
+                ZoomLevel = 25;
 
                 //_bottomLeft = new Complex(-2d, -2d);
                 //_topRight = new Complex(2d, 2d);
 
-                //var _bottomLeft = new Complex(-2.25d, -1.5d);
-                //var _topRight = new Complex(0.75d, 1.5d);
+                //_bottomLeft = new Complex(-2.25d, -1.5d);
+                //_topRight = new Complex(0.75d, 1.5d);
 
-                //var _bottomLeft = new Complex(-1.5d, -0.5d);
-                //var _topRight = new Complex(-0.5d, 0.5d);
+                //_bottomLeft = new Complex(-1.5d, -0.5d);
+                //_topRight = new Complex(-0.5d, 0.5d);
 
-                //var _bottomLeft = new Complex(-0.0d, -0.9d);
-                //var _topRight = new Complex(0.6d, -0.3d);
+                //_bottomLeft = new Complex(-0.0d, -0.9d);
+                //_topRight = new Complex(0.6d, -0.3d);
 
                 _bottomLeft = new Complex(-0.22d, -0.70d);
                 _topRight = new Complex(-0.21d, -0.69d);
@@ -70,6 +71,38 @@ namespace FractalsWpf
                 Render();
 
                 _initDone = true;
+            };
+
+            ZoomLevelSlider.ValueChanged += (_, args) =>
+            {
+                if (_initDone)
+                {
+                    var diff = args.NewValue - args.OldValue;
+
+                    foreach (var idx in Enumerable.Range(0, (int)Math.Abs(diff)))
+                    {
+                        if (diff > 0)
+                        {
+                            var w = _topRight.Real - _bottomLeft.Real;
+                            var h = _topRight.Imaginary - _bottomLeft.Imaginary;
+                            var dw = w / 4;
+                            var dh = h / 4;
+                            _bottomLeft = new Complex(_bottomLeft.Real + dw, _bottomLeft.Imaginary + dh);
+                            _topRight = new Complex(_topRight.Real - dw, _topRight.Imaginary - dh);
+                        }
+                        else
+                        {
+                            var w = _topRight.Real - _bottomLeft.Real;
+                            var h = _topRight.Imaginary - _bottomLeft.Imaginary;
+                            var dw = w / 2;
+                            var dh = h / 2;
+                            _bottomLeft = new Complex(_bottomLeft.Real - dw, _bottomLeft.Imaginary - dh);
+                            _topRight = new Complex(_topRight.Real + dw, _topRight.Imaginary + dh);
+                        }
+                    }
+
+                    Render();
+                }
             };
 
             MaxIterationsSlider.ValueChanged += (_, __) =>
@@ -111,6 +144,16 @@ namespace FractalsWpf
             set
             {
                 _maxIterations = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int ZoomLevel
+        {
+            get { return _zoomLevel; }
+            set
+            {
+                _zoomLevel = value;
                 OnPropertyChanged();
             }
         }
