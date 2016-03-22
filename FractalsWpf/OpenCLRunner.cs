@@ -10,7 +10,7 @@ namespace FractalsWpf
     // ReSharper disable once InconsistentNaming
     public class OpenCLRunner : IDisposable
     {
-        public OpenCLRunner(string resourceName, string functionName)
+        public OpenCLRunner(string functionName)
         {
             var platform = OpenCLPlatform.Platforms.FirstOrDefault(p => p.Vendor.Contains("NVIDIA"));
             Context = new OpenCLContext(
@@ -20,6 +20,7 @@ namespace FractalsWpf
                 IntPtr.Zero);
             var device = Context.Devices.First();
             CommandQueue = new OpenCLCommandQueue(Context, device, OpenCLCommandQueueProperties.None);
+            var resourceName = $"FractalsWpf.OpenCL.{functionName}.cl";
             var program = LoadProgram(resourceName);
             Kernel = program.CreateKernel(functionName);
         }

@@ -1,6 +1,4 @@
-﻿kernel void CreateJuliaSetPixelArray(
-	float cr,
-	float ci,
+﻿kernel void MandelbrotSetCreatePixelArray(
 	float minReal,
 	float minImaginary,
 	float realDelta,
@@ -12,8 +10,11 @@
 	int gid1 = get_global_id(1);
 	int width = get_global_size(1);
 
-	float zr = minReal + (realDelta * gid1);
-	float zi = minImaginary + (imaginaryDelta * gid0);
+	float zr = 0.0f;
+	float zi = 0.0f;
+
+	float cr = minReal + (realDelta * gid1);
+	float ci = minImaginary + (imaginaryDelta * gid0);
 
 	int iter = 0;
 

@@ -10,9 +10,7 @@ namespace FractalsWpf
 
         public JuliaSetGpu()
         {
-            _runner = new OpenCLRunner(
-                "FractalsWpf.CreateJuliaSetPixelArray.cl",
-                "CreateJuliaSetPixelArray");
+            _runner = new OpenCLRunner("JuliaSetCreatePixelArray");
         }
 
         public int[] CreatePixelArray(

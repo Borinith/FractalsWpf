@@ -10,9 +10,7 @@ namespace FractalsWpf
 
         public MandelbrotSetGpu()
         {
-            _runner = new OpenCLRunner(
-                "FractalsWpf.CreateMandelbrotSetPixelArray.cl",
-                "CreateMandelbrotSetPixelArray");
+            _runner = new OpenCLRunner("MandelbrotSetCreatePixelArray");
         }
 
         public int[] CreatePixelArray(
