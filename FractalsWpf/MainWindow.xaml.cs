@@ -113,28 +113,6 @@ namespace FractalsWpf
                 }
             };
 
-            ZoomInBtn.Click += (_, __) =>
-            {
-                var w = _topRight.Real - _bottomLeft.Real;
-                var h = _topRight.Imaginary - _bottomLeft.Imaginary;
-                var dw = w/4;
-                var dh = h/4;
-                _bottomLeft = new Complex(_bottomLeft.Real + dw, _bottomLeft.Imaginary + dh);
-                _topRight = new Complex(_topRight.Real - dw, _topRight.Imaginary - dh);
-                Render();
-            };
-
-            ZoomOutBtn.Click += (_, __) =>
-            {
-                var w = _topRight.Real - _bottomLeft.Real;
-                var h = _topRight.Imaginary - _bottomLeft.Imaginary;
-                var dw = w/2;
-                var dh = h/2;
-                _bottomLeft = new Complex(_bottomLeft.Real - dw, _bottomLeft.Imaginary - dh);
-                _topRight = new Complex(_topRight.Real + dw, _topRight.Imaginary + dh);
-                Render();
-            };
-
             RenderBtn.Click += (_, __) => { Render(); };
 
             Closed += (_, __) =>
