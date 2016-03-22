@@ -10,7 +10,7 @@ namespace FractalsWpf
 
         public MandelbrotSetGpu()
         {
-            _runner = new OpenCLRunner("MandelbrotSetCreatePixelArray");
+            _runner = new OpenCLRunner("CreatePixelArrayMandelbrotSet");
         }
 
         public int[] CreatePixelArray(
@@ -25,8 +25,8 @@ namespace FractalsWpf
             var maxReal = (float)Math.Max(c1.Real, c2.Real);
             var minImaginary = (float)Math.Min(c1.Imaginary, c2.Imaginary);
             var maxImaginary = (float)Math.Max(c1.Imaginary, c2.Imaginary);
-            var realDelta = (maxReal - minReal)/(numWidthDivisions - 1);
-            var imaginaryDelta = (maxImaginary - minImaginary)/(numHeightDivisions - 1);
+            var deltaReal = (maxReal - minReal)/(numWidthDivisions - 1);
+            var deltaImaginary = (maxImaginary - minImaginary)/(numHeightDivisions - 1);
             var numResults = numWidthDivisions * numHeightDivisions;
             var results = new int[numResults];
             const OpenCLMemoryFlags bufferFlags = OpenCLMemoryFlags.WriteOnly | OpenCLMemoryFlags.AllocateHostPointer;
@@ -35,12 +35,10 @@ namespace FractalsWpf
 
             using (var resultsBuffer = new OpenCLBuffer(_runner.Context, bufferFlags, bufferElementType, bufferCount))
             {
-                _runner.Kernel.SetValueArgument(0, minReal);
-                _runner.Kernel.SetValueArgument(1, minImaginary);
-                _runner.Kernel.SetValueArgument(2, realDelta);
-                _runner.Kernel.SetValueArgument(3, imaginaryDelta);
-                _runner.Kernel.SetValueArgument(4, maxIterations);
-                _runner.Kernel.SetMemoryArgument(5, resultsBuffer);
+                _runner.Kernel.SetValueArgument(0, new Vector2(minReal, minImaginary));
+                _runner.Kernel.SetValueArgument(1, new Vector2(deltaReal, deltaImaginary));
+                _runner.Kernel.SetValueArgument(2, maxIterations);
+                _runner.Kernel.SetMemoryArgument(3, resultsBuffer);
 
                 var globalWorkSize = new long[] { numHeightDivisions, numWidthDivisions };
                 _runner.CommandQueue.Execute(_runner.Kernel, null, globalWorkSize, null);

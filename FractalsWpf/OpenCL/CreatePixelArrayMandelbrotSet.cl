@@ -1,8 +1,6 @@
-﻿kernel void MandelbrotSetCreatePixelArray(
-	float minReal,
-	float minImaginary,
-	float realDelta,
-	float imaginaryDelta,
+﻿kernel void CreatePixelArrayMandelbrotSet(
+	float2 bottomLeft,
+	float2 delta,
 	int maxIterations,
 	global int *results)
 {
@@ -13,8 +11,8 @@
 	float zr = 0.0f;
 	float zi = 0.0f;
 
-	float cr = minReal + (realDelta * gid1);
-	float ci = minImaginary + (imaginaryDelta * gid0);
+	float cr = bottomLeft.x + (delta.x * gid1);
+	float ci = bottomLeft.y + (delta.y * gid0);
 
 	int iter = 0;
 

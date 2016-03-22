@@ -1,10 +1,7 @@
-﻿kernel void JuliaSetCreatePixelArray(
-	float cr,
-	float ci,
-	float minReal,
-	float minImaginary,
-	float realDelta,
-	float imaginaryDelta,
+﻿kernel void CreatePixelArrayJuliaSet(
+	float2 c,
+	float2 bottomLeft,
+	float2 delta,
 	int maxIterations,
 	global int *results)
 {
@@ -12,15 +9,15 @@
 	int gid1 = get_global_id(1);
 	int width = get_global_size(1);
 
-	float zr = minReal + (realDelta * gid1);
-	float zi = minImaginary + (imaginaryDelta * gid0);
+	float zr = bottomLeft.x + (delta.x * gid1);
+	float zi = bottomLeft.y + (delta.y * gid0);
 
 	int iter = 0;
 
 	for (; iter < maxIterations; ++iter)
 	{
-		float zrNext = ((zr * zr) - (zi * zi)) + cr;
-		float ziNext = (2 * zr * zi) + ci;
+		float zrNext = ((zr * zr) - (zi * zi)) + c.x;
+		float ziNext = (2 * zr * zi) + c.y;
 
 		if (zrNext * zrNext + ziNext * ziNext >= 4.0f) break;
 

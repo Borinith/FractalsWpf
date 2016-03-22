@@ -155,8 +155,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="OpenCL\MandelbrotSetCreatePixelArray.cl" />
-    <EmbeddedResource Include="OpenCL\JuliaSetCreatePixelArray.cl" />
+    <EmbeddedResource Include="OpenCL\CreatePixelArrayMandelbrotSet.cl" />
+    <EmbeddedResource Include="OpenCL\CreatePixelArrayJuliaSet.cl" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
