@@ -3,7 +3,7 @@
 	float2 bottomLeft,
 	float2 delta,
 	int maxIterations,
-	global int *results)
+	global ushort *results)
 {
 	int gid0 = get_global_id(0);
 	int gid1 = get_global_id(1);
@@ -12,7 +12,7 @@
 	float zr = bottomLeft.x + (delta.x * gid1);
 	float zi = bottomLeft.y + (delta.y * gid0);
 
-	int iter = 0;
+	ushort iter = 0;
 
 	for (; iter < maxIterations; ++iter)
 	{

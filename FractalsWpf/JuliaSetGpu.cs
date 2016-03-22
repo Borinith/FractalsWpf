@@ -13,7 +13,7 @@ namespace FractalsWpf
             _runner = new OpenCLRunner("CreatePixelArrayJuliaSet");
         }
 
-        public int[] CreatePixelArray(
+        public ushort[] CreatePixelArray(
             Complex c,
             Complex c1,
             Complex c2,
@@ -28,10 +28,10 @@ namespace FractalsWpf
             var deltaReal = (maxReal - minReal)/(numWidthDivisions - 1);
             var deltaImaginary = (maxImaginary - minImaginary)/(numHeightDivisions - 1);
             var numResults = numWidthDivisions * numHeightDivisions;
-            var results = new int[numResults];
+            var results = new ushort[numResults];
             const OpenCLMemoryFlags bufferFlags = OpenCLMemoryFlags.WriteOnly | OpenCLMemoryFlags.AllocateHostPointer;
             var bufferCount = new long[] {numResults};
-            var bufferElementType = typeof (int);
+            var bufferElementType = typeof (ushort);
 
             using (var resultsBuffer = new OpenCLBuffer(_runner.Context, bufferFlags, bufferElementType, bufferCount))
             {

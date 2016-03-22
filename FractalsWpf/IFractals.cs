@@ -4,7 +4,7 @@ namespace FractalsWpf
 {
     public interface IFractals
     {
-        int[] CreatePixelArray(
+        ushort[] CreatePixelArray(
             Complex constant,
             Complex c1,
             Complex c2,

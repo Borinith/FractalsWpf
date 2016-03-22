@@ -15,9 +15,9 @@ namespace FractalsWpf
     {
         private static readonly int[] ColourMap = ColourMaps.GetColourMap("jet");
         //private readonly IFractals _mandelbrotSet = new MandelbrotSet();
-        //private readonly IFractals _mandelbrotSetGpu = new MandelbrotSetGpu();
+        private readonly IFractals _mandelbrotSetGpu = new MandelbrotSetGpu();
         //private readonly IFractals _juliaSet = new JuliaSet();
-        private readonly IFractals _juliaSetGpu = new JuliaSetGpu();
+        //private readonly IFractals _juliaSetGpu = new JuliaSetGpu();
         private int _fractalImageWidth;
         private int _fractalImageHeight;
         private WriteableBitmap _writeableBitmap;
@@ -50,8 +50,8 @@ namespace FractalsWpf
 
                 MaxIterations = 120;
 
-                _bottomLeft = new Complex(-2d, -2d);
-                _topRight = new Complex(2d, 2d);
+                //_bottomLeft = new Complex(-2d, -2d);
+                //_topRight = new Complex(2d, 2d);
 
                 //var _bottomLeft = new Complex(-2.25d, -1.5d);
                 //var _topRight = new Complex(0.75d, 1.5d);
@@ -62,10 +62,10 @@ namespace FractalsWpf
                 //var _bottomLeft = new Complex(-0.0d, -0.9d);
                 //var _topRight = new Complex(0.6d, -0.3d);
 
-                //_bottomLeft = new Complex(-0.22d, -0.70d);
-                //_topRight = new Complex(-0.21d, -0.69d);
+                _bottomLeft = new Complex(-0.22d, -0.70d);
+                _topRight = new Complex(-0.21d, -0.69d);
 
-                _fractals = _juliaSetGpu;
+                _fractals = _mandelbrotSetGpu;
 
                 Render();
 
@@ -141,7 +141,7 @@ namespace FractalsWpf
             _writeableBitmap.WritePixels(sourceRect, pixels, _writeableBitmap.BackBufferStride, 0);
         }
 
-        private static int[] ValuesToPixels(int[] values, IReadOnlyList<int> colourMap)
+        private static int[] ValuesToPixels(ushort[] values, IReadOnlyList<int> colourMap)
         {
             var lastIndex = colourMap.Count - 1;
             var vmin = (double)values.Min();

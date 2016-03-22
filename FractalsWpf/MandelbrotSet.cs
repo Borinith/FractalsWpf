@@ -7,7 +7,7 @@ namespace FractalsWpf
 {
     public class MandelbrotSet : IFractals
     {
-        public int[] CreatePixelArray(
+        public ushort[] CreatePixelArray(
             Complex _,
             Complex c1,
             Complex c2,
@@ -31,17 +31,17 @@ namespace FractalsWpf
             return results.ToArray();
         }
 
-        private static int BeginsToDivergeAt(Complex c, int maxIterations)
+        private static ushort BeginsToDivergeAt(Complex c, int maxIterations)
         {
             var z = Complex.Zero;
 
             foreach (var iterations in Enumerable.Range(0, maxIterations))
             {
                 z = z * z + c;
-                if (z.Real * z.Real + z.Imaginary * z.Imaginary >= 4d) return iterations;
+                if (z.Real * z.Real + z.Imaginary * z.Imaginary >= 4d) return (ushort)iterations;
             }
 
-            return maxIterations;
+            return (ushort)maxIterations;
         }
     }
 }
