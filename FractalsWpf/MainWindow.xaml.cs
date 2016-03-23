@@ -112,34 +112,37 @@ namespace FractalsWpf
             };
 
             var mouseDownPt = new Point();
-            var mouseDownSeen = false;
+            var panningInProgress = false;
 
-            MouseDown += (_, args) =>
+            MouseDown += (_, __) =>
             {
                 mouseDownPt = Mouse.GetPosition(FractalImage);
-                mouseDownSeen = true;
+                panningInProgress = true;
             };
 
             MouseMove += (_, __) =>
             {
-                if (mouseDownSeen)
-                {
-                    var mouseMovePt = Mouse.GetPosition(FractalImage);
-                    var mouseDx = mouseMovePt.X - mouseDownPt.X;
-                    var mouseDy = mouseMovePt.Y - mouseDownPt.Y;
-                    var regionWidth = _topRight.Real - _bottomLeft.Real;
-                    var regionHeight = _topRight.Imaginary - _bottomLeft.Imaginary;
-                    var regionDx = mouseDx / _fractalImageWidth * regionWidth;
-                    var regionDy = mouseDy / _fractalImageHeight * regionHeight;
-                    _bottomLeft = new Complex(_bottomLeft.Real - regionDx, _bottomLeft.Imaginary - regionDy);
-                    _topRight = new Complex(_topRight.Real - regionDx, _topRight.Imaginary - regionDy);
-                    Render();
-                }
+                if (!panningInProgress) return;
+                var mouseMovePt = Mouse.GetPosition(FractalImage);
+                var mouseDx = mouseMovePt.X - mouseDownPt.X;
+                var mouseDy = mouseMovePt.Y - mouseDownPt.Y;
+                var regionWidth = _topRight.Real - _bottomLeft.Real;
+                var regionHeight = _topRight.Imaginary - _bottomLeft.Imaginary;
+                var regionDx = mouseDx / _fractalImageWidth * regionWidth;
+                var regionDy = mouseDy / _fractalImageHeight * regionHeight;
+                _bottomLeft = new Complex(_bottomLeft.Real - regionDx, _bottomLeft.Imaginary - regionDy);
+                _topRight = new Complex(_topRight.Real - regionDx, _topRight.Imaginary - regionDy);
+                Render();
             };
 
             MouseUp += (_, __) =>
             {
-                mouseDownSeen = false;
+                panningInProgress = false;
+            };
+
+            MouseLeave += (_, __) =>
+            {
+                panningInProgress = false;
             };
 
             Closed += (_, __) =>
