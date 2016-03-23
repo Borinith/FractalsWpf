@@ -36,6 +36,40 @@ namespace FractalsWpf
             Context?.Dispose();
         }
 
+        public OpenCLBuffer CreateWriteOnlyBuffer<T>(long count)
+        {
+            const OpenCLMemoryFlags flags = OpenCLMemoryFlags.WriteOnly | OpenCLMemoryFlags.AllocateHostPointer;
+            return new OpenCLBuffer(Context, flags, typeof(T), new [] {count});
+        }
+
+        public void ReadBuffer<T>(OpenCLBuffer sourceBuffer, T[] destinationArray)
+        {
+            using (var destinationArrayHandle = new PinnedObject(destinationArray))
+            {
+                CommandQueue.ReadFromBuffer(
+                    sourceBuffer,
+                    destinationArrayHandle,
+                    true, // blocking
+                    0L, // offset
+                    destinationArray.Length); // region
+            }
+        }
+
+        public void RunKernelGlobal2D(int globalWorkSize0, int globalWorkSize1)
+        {
+            var globalWorkSize = new long[] { globalWorkSize0, globalWorkSize1};
+            CommandQueue.Execute(
+                Kernel,
+                null, // globalWorkOffset
+                globalWorkSize,
+                null); // localWorkSize
+        }
+
+        public void Finish()
+        {
+            CommandQueue.Finish();
+        }
+
         private OpenCLProgram LoadProgram(string resourceName)
         {
             var source = GetProgramSourceFromResource(Assembly.GetExecutingAssembly(), resourceName);

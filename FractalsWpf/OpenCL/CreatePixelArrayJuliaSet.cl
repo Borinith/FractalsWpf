@@ -19,7 +19,12 @@
 		float zrNext = ((zr * zr) - (zi * zi)) + c.x;
 		float ziNext = (2 * zr * zi) + c.y;
 
-		if (zrNext * zrNext + ziNext * ziNext >= 4.0f) break;
+		if (zrNext >= 2.0f ||
+			ziNext >= 2.0f ||
+			zrNext * zrNext + ziNext * ziNext >= 4.0f)
+		{
+			break;
+		}
 
 		zr = zrNext;
 		zi = ziNext;

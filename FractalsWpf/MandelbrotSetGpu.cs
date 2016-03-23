@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Numerics;
-using OpenCL;
 
 namespace FractalsWpf
 {
-    class MandelbrotSetGpu : IFractals, IDisposable
+    class MandelbrotSetGpu : IFractals
     {
         private readonly OpenCLRunner _runner;
 
@@ -29,27 +28,16 @@ namespace FractalsWpf
             var deltaImaginary = (maxImaginary - minImaginary)/(numHeightDivisions - 1);
             var numResults = numWidthDivisions * numHeightDivisions;
             var results = new ushort[numResults];
-            const OpenCLMemoryFlags bufferFlags = OpenCLMemoryFlags.WriteOnly | OpenCLMemoryFlags.AllocateHostPointer;
-            var bufferCount = new long[] {numResults};
-            var bufferElementType = typeof (ushort);
 
-            using (var resultsBuffer = new OpenCLBuffer(_runner.Context, bufferFlags, bufferElementType, bufferCount))
+            using (var resultsBuffer = _runner.CreateWriteOnlyBuffer<ushort>(numResults))
             {
                 _runner.Kernel.SetValueArgument(0, new Vector2(minReal, minImaginary));
                 _runner.Kernel.SetValueArgument(1, new Vector2(deltaReal, deltaImaginary));
                 _runner.Kernel.SetValueArgument(2, maxIterations);
                 _runner.Kernel.SetMemoryArgument(3, resultsBuffer);
-
-                var globalWorkSize = new long[] { numWidthDivisions, numHeightDivisions };
-                _runner.CommandQueue.Execute(_runner.Kernel, null, globalWorkSize, null);
-
-                using (var resultsHandle = new PinnedObject(results))
-                {
-                    _runner.CommandQueue.ReadFromBuffer(resultsBuffer, resultsHandle, true, 0L, numResults);
-                }
-
-                _runner.CommandQueue.Finish();
-
+                _runner.RunKernelGlobal2D(numWidthDivisions, numHeightDivisions);
+                _runner.ReadBuffer(resultsBuffer, results);
+                _runner.Finish();
                 return results;
             }
         }
