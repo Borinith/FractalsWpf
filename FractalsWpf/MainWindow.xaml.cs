@@ -66,55 +66,50 @@ namespace FractalsWpf
 
                 _bottomLeft = new Complex(-0.22d, -0.70d);
                 _topRight = new Complex(-0.21d, -0.69d);
-
                 _fractals = _mandelbrotSetGpu;
+                _initDone = true;
 
                 Render();
-
-                _initDone = true;
             };
 
             ZoomLevelSlider.ValueChanged += (_, args) =>
             {
-                if (_initDone)
+                var diff = args.NewValue - args.OldValue;
+
+                foreach (var idx in Enumerable.Range(0, (int)Math.Abs(diff)))
                 {
-                    var diff = args.NewValue - args.OldValue;
-
-                    foreach (var idx in Enumerable.Range(0, (int)Math.Abs(diff)))
+                    if (diff > 0)
                     {
-                        if (diff > 0)
-                        {
-                            var w = _topRight.Real - _bottomLeft.Real;
-                            var h = _topRight.Imaginary - _bottomLeft.Imaginary;
-                            var dw = w / 8;
-                            var dh = h / 8;
-                            _bottomLeft = new Complex(_bottomLeft.Real + dw, _bottomLeft.Imaginary + dh);
-                            _topRight = new Complex(_topRight.Real - dw, _topRight.Imaginary - dh);
-                        }
-                        else
-                        {
-                            var w = _topRight.Real - _bottomLeft.Real;
-                            var h = _topRight.Imaginary - _bottomLeft.Imaginary;
-                            var dw = w / 4;
-                            var dh = h / 4;
-                            _bottomLeft = new Complex(_bottomLeft.Real - dw, _bottomLeft.Imaginary - dh);
-                            _topRight = new Complex(_topRight.Real + dw, _topRight.Imaginary + dh);
-                        }
+                        var w = _topRight.Real - _bottomLeft.Real;
+                        var h = _topRight.Imaginary - _bottomLeft.Imaginary;
+                        var dw = w / 8;
+                        var dh = h / 8;
+                        _bottomLeft = new Complex(_bottomLeft.Real + dw, _bottomLeft.Imaginary + dh);
+                        _topRight = new Complex(_topRight.Real - dw, _topRight.Imaginary - dh);
                     }
-
-                    Render();
+                    else
+                    {
+                        var w = _topRight.Real - _bottomLeft.Real;
+                        var h = _topRight.Imaginary - _bottomLeft.Imaginary;
+                        var dw = w / 4;
+                        var dh = h / 4;
+                        _bottomLeft = new Complex(_bottomLeft.Real - dw, _bottomLeft.Imaginary - dh);
+                        _topRight = new Complex(_topRight.Real + dw, _topRight.Imaginary + dh);
+                    }
                 }
+
+                Render();
             };
 
             MaxIterationsSlider.ValueChanged += (_, __) =>
             {
-                if (_initDone)
-                {
-                    Render();
-                }
+                Render();
             };
 
-            RenderBtn.Click += (_, __) => { Render(); };
+            SizeChanged += (_, __) =>
+            {
+                Render();
+            };
 
             var mouseDownPt = new Point();
             var mouseDownSeen = false;
@@ -127,7 +122,7 @@ namespace FractalsWpf
 
             MouseMove += (_, __) =>
             {
-                if (mouseDownSeen && _initDone)
+                if (mouseDownSeen)
                 {
                     var mouseMovePt = Mouse.GetPosition(FractalImage);
                     var mouseDx = mouseMovePt.X - mouseDownPt.X;
@@ -175,6 +170,7 @@ namespace FractalsWpf
 
         private void Render()
         {
+            if (!_initDone) return;
             var tuple = TimeIt(() => _fractals.CreatePixelArray(
                 new Complex(-0.35, 0.65),
                 _bottomLeft,
