@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Numerics;
+using OpenCL;
 
 namespace FractalsWpf
 {
     class MandelbrotSetGpu : IFractal
     {
         private readonly OpenCLRunner _runner;
+        private OpenCLBuffer _resultsBuffer;
 
         public MandelbrotSetGpu()
         {
@@ -29,22 +31,30 @@ namespace FractalsWpf
             var numResults = numWidthDivisions * numHeightDivisions;
             var results = new ushort[numResults];
 
-            using (var resultsBuffer = _runner.CreateWriteOnlyBuffer<ushort>(numResults))
-            {
-                _runner.Kernel.SetValueArgument(0, new Vector2(minReal, minImaginary));
-                _runner.Kernel.SetValueArgument(1, new Vector2(deltaReal, deltaImaginary));
-                _runner.Kernel.SetValueArgument(2, maxIterations);
-                _runner.Kernel.SetMemoryArgument(3, resultsBuffer);
-                _runner.RunKernelGlobal2D(numWidthDivisions, numHeightDivisions);
-                _runner.ReadBuffer(resultsBuffer, results);
-                _runner.Finish();
-                return results;
-            }
+            ReallocateResultsBufferIfNecessary(numResults);
+
+            _runner.Kernel.SetValueArgument(0, new Vector2(minReal, minImaginary));
+            _runner.Kernel.SetValueArgument(1, new Vector2(deltaReal, deltaImaginary));
+            _runner.Kernel.SetValueArgument(2, maxIterations);
+            _runner.Kernel.SetMemoryArgument(3, _resultsBuffer);
+            _runner.RunKernelGlobal2D(numWidthDivisions, numHeightDivisions);
+            _runner.ReadBuffer(_resultsBuffer, results);
+            _runner.Finish();
+
+            return results;
         }
 
         public void Dispose()
         {
-            _runner.Dispose();
+            _resultsBuffer?.Dispose();
+            _runner?.Dispose();
+        }
+
+        private void ReallocateResultsBufferIfNecessary(int numResults)
+        {
+            if ((_resultsBuffer?.Length ?? 0) == numResults) return;
+            _resultsBuffer?.Dispose();
+            _resultsBuffer = _runner.CreateWriteOnlyBuffer<ushort>(numResults);
         }
     }
 }
