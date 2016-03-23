@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -85,8 +86,8 @@ namespace FractalsWpf
                         {
                             var w = _topRight.Real - _bottomLeft.Real;
                             var h = _topRight.Imaginary - _bottomLeft.Imaginary;
-                            var dw = w / 4;
-                            var dh = h / 4;
+                            var dw = w / 8;
+                            var dh = h / 8;
                             _bottomLeft = new Complex(_bottomLeft.Real + dw, _bottomLeft.Imaginary + dh);
                             _topRight = new Complex(_topRight.Real - dw, _topRight.Imaginary - dh);
                         }
@@ -94,8 +95,8 @@ namespace FractalsWpf
                         {
                             var w = _topRight.Real - _bottomLeft.Real;
                             var h = _topRight.Imaginary - _bottomLeft.Imaginary;
-                            var dw = w / 2;
-                            var dh = h / 2;
+                            var dw = w / 4;
+                            var dh = h / 4;
                             _bottomLeft = new Complex(_bottomLeft.Real - dw, _bottomLeft.Imaginary - dh);
                             _topRight = new Complex(_topRight.Real + dw, _topRight.Imaginary + dh);
                         }
@@ -114,6 +115,37 @@ namespace FractalsWpf
             };
 
             RenderBtn.Click += (_, __) => { Render(); };
+
+            var mouseDownPt = new Point();
+            var mouseDownSeen = false;
+
+            MouseDown += (_, args) =>
+            {
+                mouseDownPt = Mouse.GetPosition(FractalImage);
+                mouseDownSeen = true;
+            };
+
+            MouseMove += (_, __) =>
+            {
+                if (mouseDownSeen && _initDone)
+                {
+                    var mouseMovePt = Mouse.GetPosition(FractalImage);
+                    var mouseDx = mouseMovePt.X - mouseDownPt.X;
+                    var mouseDy = mouseMovePt.Y - mouseDownPt.Y;
+                    var regionWidth = _topRight.Real - _bottomLeft.Real;
+                    var regionHeight = _topRight.Imaginary - _bottomLeft.Imaginary;
+                    var regionDx = mouseDx / _fractalImageWidth * regionWidth;
+                    var regionDy = mouseDy / _fractalImageHeight * regionHeight;
+                    _bottomLeft = new Complex(_bottomLeft.Real - regionDx, _bottomLeft.Imaginary - regionDy);
+                    _topRight = new Complex(_topRight.Real - regionDx, _topRight.Imaginary - regionDy);
+                    Render();
+                }
+            };
+
+            MouseUp += (_, __) =>
+            {
+                mouseDownSeen = false;
+            };
 
             Closed += (_, __) =>
             {
