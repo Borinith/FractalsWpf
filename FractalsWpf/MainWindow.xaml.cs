@@ -190,7 +190,7 @@ namespace FractalsWpf
 
             var values = tuple.Item1;
             var elapsed = tuple.Item2;
-            StatusBarText.Text = $"{_fractal.GetType().Name}: {elapsed}";
+            StatusBarText.Text = $"{_fractal.GetType().Name}: {elapsed.TotalMilliseconds}ms";
 
             //var pixels = BarnsleyFern.CreatePixelArray(
             //    fractalImageWidth,
