@@ -19,6 +19,7 @@ namespace FractalsWpf
         private readonly IFractals _mandelbrotSetGpu = new MandelbrotSetGpu();
         //private readonly IFractals _juliaSet = new JuliaSet();
         //private readonly IFractals _juliaSetGpu = new JuliaSetGpu();
+        //private readonly IFractals _barnsleyFern = new BarnsleyFern();
         private int _fractalImageWidth;
         private int _fractalImageHeight;
         private WriteableBitmap _writeableBitmap;
@@ -50,6 +51,7 @@ namespace FractalsWpf
                 FractalImage.Source = _writeableBitmap;
 
                 MaxIterations = 120;
+                //MaxIterations = 120000;
                 ZoomLevel = 25;
 
                 //_bottomLeft = new Complex(-2d, -2d);
@@ -66,6 +68,10 @@ namespace FractalsWpf
 
                 _bottomLeft = new Complex(-0.22d, -0.70d);
                 _topRight = new Complex(-0.21d, -0.69d);
+
+                //_bottomLeft = new Complex(-3d, -1d);
+                //_topRight = new Complex(3d, 11d);
+
                 _fractals = _mandelbrotSetGpu;
                 _initDone = true;
 
