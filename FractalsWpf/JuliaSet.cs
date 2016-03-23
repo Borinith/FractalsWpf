@@ -5,7 +5,7 @@ using MathNet.Numerics;
 
 namespace FractalsWpf
 {
-    public class JuliaSet : IFractals
+    public class JuliaSet : IFractal
     {
         public ushort[] CreatePixelArray(
             Complex c,

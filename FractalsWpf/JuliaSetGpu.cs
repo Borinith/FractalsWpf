@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace FractalsWpf
 {
-    class JuliaSetGpu : IFractals
+    class JuliaSetGpu : IFractal
     {
         private readonly OpenCLRunner _runner;
 

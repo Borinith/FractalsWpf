@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace FractalsWpf
 {
-    class MandelbrotSetGpu : IFractals
+    class MandelbrotSetGpu : IFractal
     {
         private readonly OpenCLRunner _runner;
 

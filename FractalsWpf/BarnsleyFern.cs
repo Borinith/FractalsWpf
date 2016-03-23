@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace FractalsWpf
 {
-    public class BarnsleyFern : IFractals
+    public class BarnsleyFern : IFractal
     {
         public ushort[] CreatePixelArray(
             Complex _,

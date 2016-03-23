@@ -15,11 +15,12 @@ namespace FractalsWpf
     public sealed partial class MainWindow : INotifyPropertyChanged
     {
         private static readonly int[] ColourMap = ColourMaps.GetColourMap("jet");
-        //private readonly IFractals _mandelbrotSet = new MandelbrotSet();
-        private readonly IFractals _mandelbrotSetGpu = new MandelbrotSetGpu();
-        //private readonly IFractals _juliaSet = new JuliaSet();
-        //private readonly IFractals _juliaSetGpu = new JuliaSetGpu();
-        //private readonly IFractals _barnsleyFern = new BarnsleyFern();
+        private readonly IFractal _mandelbrotSet = new MandelbrotSet();
+        private readonly IFractal _mandelbrotSetGpu = new MandelbrotSetGpu();
+        private readonly IFractal _juliaSet = new JuliaSet();
+        private readonly IFractal _juliaSetGpu = new JuliaSetGpu();
+        private readonly IFractal _barnsleyFern = new BarnsleyFern();
+        private IFractal _fractal;
         private int _fractalImageWidth;
         private int _fractalImageHeight;
         private WriteableBitmap _writeableBitmap;
@@ -27,7 +28,6 @@ namespace FractalsWpf
         private int _zoomLevel;
         private Complex _bottomLeft;
         private Complex _topRight;
-        private IFractals _fractals;
         private bool _initDone;
 
         public MainWindow()
@@ -72,7 +72,7 @@ namespace FractalsWpf
                 //_bottomLeft = new Complex(-3d, -1d);
                 //_topRight = new Complex(3d, 11d);
 
-                _fractals = _mandelbrotSetGpu;
+                _fractal = _mandelbrotSetGpu;
                 _initDone = true;
 
                 Render();
@@ -153,7 +153,7 @@ namespace FractalsWpf
 
             Closed += (_, __) =>
             {
-                _fractals.Dispose();
+                _fractal.Dispose();
             };
         }
 
@@ -180,7 +180,7 @@ namespace FractalsWpf
         private void Render()
         {
             if (!_initDone) return;
-            var tuple = TimeIt(() => _fractals.CreatePixelArray(
+            var tuple = TimeIt(() => _fractal.CreatePixelArray(
                 new Complex(-0.35, 0.65),
                 _bottomLeft,
                 _topRight,
@@ -190,7 +190,7 @@ namespace FractalsWpf
 
             var values = tuple.Item1;
             var elapsed = tuple.Item2;
-            StatusBarText.Text = $"{_fractals.GetType().Name}: {elapsed}";
+            StatusBarText.Text = $"{_fractal.GetType().Name}: {elapsed}";
 
             //var pixels = BarnsleyFern.CreatePixelArray(
             //    fractalImageWidth,

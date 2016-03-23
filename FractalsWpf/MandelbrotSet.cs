@@ -5,7 +5,7 @@ using MathNet.Numerics;
 
 namespace FractalsWpf
 {
-    public class MandelbrotSet : IFractals
+    public class MandelbrotSet : IFractal
     {
         public ushort[] CreatePixelArray(
             Complex _,

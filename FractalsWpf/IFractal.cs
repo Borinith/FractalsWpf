@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace FractalsWpf
 {
-    public interface IFractals : IDisposable
+    public interface IFractal : IDisposable
     {
         ushort[] CreatePixelArray(
             Complex constant,
