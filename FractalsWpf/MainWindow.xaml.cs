@@ -117,21 +117,21 @@ namespace FractalsWpf
                 Render();
             };
 
-            var mouseDownPt = new Point();
+            var lastMousePt = new Point();
             var panningInProgress = false;
 
             MouseDown += (_, __) =>
             {
-                mouseDownPt = Mouse.GetPosition(FractalImage);
+                lastMousePt = Mouse.GetPosition(FractalImage);
                 panningInProgress = true;
             };
 
             MouseMove += (_, __) =>
             {
                 if (!panningInProgress) return;
-                var mouseMovePt = Mouse.GetPosition(FractalImage);
-                var mouseDx = mouseMovePt.X - mouseDownPt.X;
-                var mouseDy = mouseMovePt.Y - mouseDownPt.Y;
+                var currentMousePt = Mouse.GetPosition(FractalImage);
+                var mouseDx = currentMousePt.X - lastMousePt.X;
+                var mouseDy = currentMousePt.Y - lastMousePt.Y;
                 var regionWidth = _topRight.Real - _bottomLeft.Real;
                 var regionHeight = _topRight.Imaginary - _bottomLeft.Imaginary;
                 var regionDx = mouseDx / _fractalImageWidth * regionWidth;
@@ -139,6 +139,7 @@ namespace FractalsWpf
                 _bottomLeft = new Complex(_bottomLeft.Real - regionDx, _bottomLeft.Imaginary - regionDy);
                 _topRight = new Complex(_topRight.Real - regionDx, _topRight.Imaginary - regionDy);
                 Render();
+                lastMousePt = currentMousePt;
             };
 
             MouseUp += (_, __) =>
