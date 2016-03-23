@@ -5,12 +5,12 @@
 	int maxIterations,
 	global ushort *results)
 {
-	int gid0 = get_global_id(0);
-	int gid1 = get_global_id(1);
-	int width = get_global_size(1);
+	int x = get_global_id(0);
+	int y = get_global_id(1);
+	int width = get_global_size(0);
 
-	float zr = bottomLeft.x + (delta.x * gid1);
-	float zi = bottomLeft.y + (delta.y * gid0);
+	float zr = bottomLeft.x + (delta.x * x);
+	float zi = bottomLeft.y + (delta.y * y);
 
 	ushort iter = 0;
 
@@ -25,5 +25,5 @@
 		zi = ziNext;
 	}
 
-	results[gid0 * width + gid1] = iter;
+	results[y * width + x] = iter;
 }

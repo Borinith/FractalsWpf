@@ -41,7 +41,7 @@ namespace FractalsWpf
                 _runner.Kernel.SetValueArgument(3, maxIterations);
                 _runner.Kernel.SetMemoryArgument(4, resultsBuffer);
 
-                var globalWorkSize = new long[] { numHeightDivisions, numWidthDivisions };
+                var globalWorkSize = new long[] { numWidthDivisions, numHeightDivisions };
                 _runner.CommandQueue.Execute(_runner.Kernel, null, globalWorkSize, null);
 
                 using (var resultsHandle = new PinnedObject(results))
