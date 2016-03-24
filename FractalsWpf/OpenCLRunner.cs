@@ -57,7 +57,7 @@ namespace FractalsWpf
 
         public void RunKernelGlobal2D(int globalWorkSize0, int globalWorkSize1)
         {
-            var globalWorkSize = new long[] { globalWorkSize0, globalWorkSize1};
+            var globalWorkSize = new long[] {globalWorkSize0, globalWorkSize1};
             CommandQueue.Execute(
                 Kernel,
                 null, // globalWorkOffset

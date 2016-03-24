@@ -37,28 +37,11 @@ namespace FractalsWpf
 
             ContentRendered += (_, __) =>
             {
-                _fractalImageWidth = (int)Math.Round(FractalImageWrapper.ActualWidth);
-                _fractalImageHeight = (int)Math.Round(FractalImageWrapper.ActualHeight);
+                //_bottomLeft = new Complex(-2d, -2d);
+                //_topRight = new Complex(2d, 2d);
 
-                _writeableBitmap = new WriteableBitmap(
-                    _fractalImageWidth,
-                    _fractalImageHeight,
-                    96,
-                    96,
-                    PixelFormats.Bgr32,
-                    null);
-
-                FractalImage.Source = _writeableBitmap;
-
-                MaxIterations = 120;
-                //MaxIterations = 120000;
-                ZoomLevel = 1;
-
-                _bottomLeft = new Complex(-2d, -2d);
-                _topRight = new Complex(2d, 2d);
-
-                //_bottomLeft = new Complex(-2.25d, -1.5d);
-                //_topRight = new Complex(0.75d, 1.5d);
+                _bottomLeft = new Complex(-2.25d, -1.5d);
+                _topRight = new Complex(0.75d, 1.5d);
 
                 //_bottomLeft = new Complex(-1.5d, -0.5d);
                 //_topRight = new Complex(-0.5d, 0.5d);
@@ -72,7 +55,12 @@ namespace FractalsWpf
                 //_bottomLeft = new Complex(-3d, -1d);
                 //_topRight = new Complex(3d, 11d);
 
-                _fractal = _juliaSetGpuDouble;
+                AdjustAspectRatio();
+
+                MaxIterations = 120;
+                ZoomLevel = 1;
+
+                _fractal = _mandelbrotSetGpuDouble;
                 _initDone = true;
 
                 Render();
@@ -114,6 +102,18 @@ namespace FractalsWpf
 
             SizeChanged += (_, __) =>
             {
+                _fractalImageWidth = (int)Math.Floor(FractalImageWrapper.ActualWidth);
+                _fractalImageHeight = (int)Math.Floor(FractalImageWrapper.ActualHeight);
+                //AdjustAspectRatio();
+                _writeableBitmap = new WriteableBitmap(
+                    _fractalImageWidth,
+                    _fractalImageHeight,
+                    96,
+                    96,
+                    PixelFormats.Bgr32,
+                    null);
+
+                FractalImage.Source = _writeableBitmap;
                 Render();
             };
 
@@ -158,6 +158,36 @@ namespace FractalsWpf
             };
         }
 
+        private void AdjustAspectRatio()
+        {
+            if (_fractalImageWidth > _fractalImageHeight)
+            {
+                var regionWidth = _topRight.Real - _bottomLeft.Real;
+                var newRegionWidthDiff = _fractalImageWidth*regionWidth/_fractalImageHeight - regionWidth;
+                var halfNewRegionWidthDiff = newRegionWidthDiff/2;
+                _bottomLeft = new Complex(_bottomLeft.Real - halfNewRegionWidthDiff, _bottomLeft.Imaginary);
+                _topRight = new Complex(_topRight.Real + halfNewRegionWidthDiff, _topRight.Imaginary);
+            }
+            else if (_fractalImageHeight > _fractalImageWidth)
+            {
+                var regionHeight = _topRight.Imaginary - _bottomLeft.Imaginary;
+                var newRegionHeightDiff = _fractalImageHeight*regionHeight/_fractalImageWidth - regionHeight;
+                var halfNewRegionHeightDiff = newRegionHeightDiff/2;
+                _bottomLeft = new Complex(_bottomLeft.Real, _bottomLeft.Imaginary - halfNewRegionHeightDiff);
+                _topRight = new Complex(_topRight.Real, _topRight.Imaginary + halfNewRegionHeightDiff);
+            }
+
+            _writeableBitmap = new WriteableBitmap(
+                _fractalImageWidth,
+                _fractalImageHeight,
+                96,
+                96,
+                PixelFormats.Bgr32,
+                null);
+
+            FractalImage.Source = _writeableBitmap;
+        }
+
         public int MaxIterations
         {
             get { return _maxIterations; }
@@ -181,6 +211,7 @@ namespace FractalsWpf
         private void Render()
         {
             if (!_initDone) return;
+
             var tuple = TimeIt(() => _fractal.CreatePixelArray(
                 new Complex(-0.35, 0.65),
                 _bottomLeft,
