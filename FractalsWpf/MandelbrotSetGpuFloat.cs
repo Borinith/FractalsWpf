@@ -1,21 +1,20 @@
 ﻿using System.Numerics;
-using System.Windows;
 using OpenCL;
 
 namespace FractalsWpf
 {
-    class JuliaSetGpu : IFractal
+    class MandelbrotSetGpuFloat : IFractal
     {
         private readonly OpenCLRunner _runner;
         private OpenCLBuffer _resultsBuffer;
 
-        public JuliaSetGpu()
+        public MandelbrotSetGpuFloat()
         {
-            _runner = new OpenCLRunner("CreatePixelArrayJuliaSet");
+            _runner = new OpenCLRunner("CreatePixelArrayMandelbrotSetFloat");
         }
 
         public ushort[] CreatePixelArray(
-            Complex c,
+            Complex _,
             Complex bottomLeft,
             Complex topRight,
             int numPointsWide,
@@ -29,11 +28,10 @@ namespace FractalsWpf
 
             ReallocateResultsBufferIfNecessary(numResults);
 
-            _runner.Kernel.SetValueArgument(0, c);
-            _runner.Kernel.SetValueArgument(1, bottomLeft);
-            _runner.Kernel.SetValueArgument(2, new Point(deltaReal, deltaImaginary));
-            _runner.Kernel.SetValueArgument(3, maxIterations);
-            _runner.Kernel.SetMemoryArgument(4, _resultsBuffer);
+            _runner.Kernel.SetValueArgument(0, new Vector2((float)bottomLeft.Real, (float)bottomLeft.Imaginary));
+            _runner.Kernel.SetValueArgument(1, new Vector2((float)deltaReal, (float)deltaImaginary));
+            _runner.Kernel.SetValueArgument(2, maxIterations);
+            _runner.Kernel.SetMemoryArgument(3, _resultsBuffer);
             _runner.RunKernelGlobal2D(numPointsWide, numPointsHigh);
             _runner.ReadBuffer(_resultsBuffer, results);
             _runner.Finish();

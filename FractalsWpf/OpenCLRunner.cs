@@ -77,7 +77,16 @@ namespace FractalsWpf
 
             try
             {
-                program.Build(new List<OpenCLDevice> {CommandQueue.Device}, string.Empty, null, IntPtr.Zero);
+                var optionsList = new[]
+                {
+                    "-cl-fast-relaxed-math",
+                    "-cl-mad-enable",
+                    "-cl-no-signed-zeros",
+                    "-cl-strict-aliasing",
+                    "-Werror"
+                };
+                var options = string.Join(" ", optionsList);
+                program.Build(new List<OpenCLDevice> {CommandQueue.Device}, options, null, IntPtr.Zero);
             }
             catch (BuildProgramFailureOpenCLException)
             {

@@ -15,8 +15,10 @@ namespace FractalsWpf
     public sealed partial class MainWindow : INotifyPropertyChanged
     {
         private static readonly int[] ColourMap = ColourMaps.GetColourMap("jet");
-        private readonly IFractal _mandelbrotSetGpu = new MandelbrotSetGpu();
-        private readonly IFractal _juliaSetGpu = new JuliaSetGpu();
+        private readonly IFractal _mandelbrotSetGpuFloat = new MandelbrotSetGpuFloat();
+        private readonly IFractal _mandelbrotSetGpuDouble = new MandelbrotSetGpuDouble();
+        private readonly IFractal _juliaSetGpuFloat = new JuliaSetGpuFloat();
+        private readonly IFractal _juliaSetGpuDouble = new JuliaSetGpuDouble();
         private readonly IFractal _barnsleyFern = new BarnsleyFern();
         private IFractal _fractal;
         private int _fractalImageWidth;
@@ -50,10 +52,10 @@ namespace FractalsWpf
 
                 MaxIterations = 120;
                 //MaxIterations = 120000;
-                ZoomLevel = 25;
+                ZoomLevel = 1;
 
-                //_bottomLeft = new Complex(-2d, -2d);
-                //_topRight = new Complex(2d, 2d);
+                _bottomLeft = new Complex(-2d, -2d);
+                _topRight = new Complex(2d, 2d);
 
                 //_bottomLeft = new Complex(-2.25d, -1.5d);
                 //_topRight = new Complex(0.75d, 1.5d);
@@ -64,13 +66,13 @@ namespace FractalsWpf
                 //_bottomLeft = new Complex(-0.0d, -0.9d);
                 //_topRight = new Complex(0.6d, -0.3d);
 
-                _bottomLeft = new Complex(-0.22d, -0.70d);
-                _topRight = new Complex(-0.21d, -0.69d);
+                //_bottomLeft = new Complex(-0.22d, -0.70d);
+                //_topRight = new Complex(-0.21d, -0.69d);
 
                 //_bottomLeft = new Complex(-3d, -1d);
                 //_topRight = new Complex(3d, 11d);
 
-                _fractal = _mandelbrotSetGpu;
+                _fractal = _juliaSetGpuDouble;
                 _initDone = true;
 
                 Render();

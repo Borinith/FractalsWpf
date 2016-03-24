@@ -19,9 +19,10 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+        <!--Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"-->
+        
         <Grid Grid.Row="0" Grid.Column="0" x:Name="FractalImageWrapper"
-              Margin="10"
-              Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+              Margin="0"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch">
             <Image x:Name="FractalImage" Stretch="None" />
@@ -29,9 +30,9 @@
         
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
             <Label>Max iterations:</Label>
-            <TextBlock Text="{Binding Path=MaxIterations}" Margin="0,0,10,10" />
+            <TextBlock Text="{Binding Path=MaxIterations}" Margin="10,0,10,10" />
             <Label>Zoom level:</Label>
-            <TextBlock Text="{Binding Path=ZoomLevel}" Margin="0,0,10,10" />
+            <TextBlock Text="{Binding Path=ZoomLevel}" Margin="10,0,10,10" />
             <StackPanel Orientation="Horizontal">
                 <Slider x:Name="ZoomLevelSlider" Orientation="Vertical" Minimum="1" Maximum="100" Value="{Binding Path=ZoomLevel}" Height="400" Margin="20" />
                 <Slider x:Name="MaxIterationsSlider" Orientation="Vertical" Minimum="10" Maximum="4096" Value="{Binding Path=MaxIterations}" Height="400" Margin="20" />

@@ -128,8 +128,10 @@
     <Compile Include="ColorExtensions.cs" />
     <Compile Include="ColourMaps.cs" />
     <Compile Include="ColourMapDataDictionary.cs" />
-    <Compile Include="JuliaSetGpu.cs" />
-    <Compile Include="MandelbrotSetGpu.cs" />
+    <Compile Include="JuliaSetGpuFloat.cs" />
+    <Compile Include="JuliaSetGpuDouble.cs" />
+    <Compile Include="MandelbrotSetGpuFloat.cs" />
+    <Compile Include="MandelbrotSetGpuDouble.cs" />
     <Compile Include="JuliaSet.cs" />
     <Compile Include="MandelbrotSet.cs" />
     <Compile Include="OpenCLRunner.cs" />
@@ -158,8 +160,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="OpenCL\CreatePixelArrayMandelbrotSet.cl" />
-    <EmbeddedResource Include="OpenCL\CreatePixelArrayJuliaSet.cl" />
+    <EmbeddedResource Include="OpenCL\CreatePixelArrayMandelbrotSetDouble.cl" />
+    <EmbeddedResource Include="OpenCL\CreatePixelArrayJuliaSetFloat.cl" />
+    <EmbeddedResource Include="OpenCL\CreatePixelArrayMandelbrotSetFloat.cl" />
+    <EmbeddedResource Include="OpenCL\CreatePixelArrayJuliaSetDouble.cl" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

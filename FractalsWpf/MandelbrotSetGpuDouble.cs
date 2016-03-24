@@ -3,14 +3,14 @@ using OpenCL;
 
 namespace FractalsWpf
 {
-    class MandelbrotSetGpu : IFractal
+    class MandelbrotSetGpuDouble : IFractal
     {
         private readonly OpenCLRunner _runner;
         private OpenCLBuffer _resultsBuffer;
 
-        public MandelbrotSetGpu()
+        public MandelbrotSetGpuDouble()
         {
-            _runner = new OpenCLRunner("CreatePixelArrayMandelbrotSet");
+            _runner = new OpenCLRunner("CreatePixelArrayMandelbrotSetDouble");
         }
 
         public ushort[] CreatePixelArray(
