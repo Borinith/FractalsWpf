@@ -7,10 +7,10 @@ namespace FractalsWpf
     {
         ushort[] CreatePixelArray(
             Complex constant,
-            Complex c1,
-            Complex c2,
-            int maxIterations,
-            int numWidthDivisions,
-            int numHeightDivisions);
+            Complex bottomLeft,
+            Complex topRight,
+            int numPointsWide,
+            int numPointsHigh,
+            int maxIterations);
     }
 }

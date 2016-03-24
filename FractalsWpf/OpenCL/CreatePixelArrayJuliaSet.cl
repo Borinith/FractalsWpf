@@ -1,7 +1,9 @@
-﻿kernel void CreatePixelArrayJuliaSet(
-	float2 c,
-	float2 bottomLeft,
-	float2 delta,
+﻿#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+
+kernel void CreatePixelArrayJuliaSet(
+	double2 c,
+	double2 bottomLeft,
+	double2 delta,
 	int maxIterations,
 	global ushort *results)
 {
@@ -9,18 +11,18 @@
 	int y = get_global_id(1);
 	int width = get_global_size(0);
 
-	float zr = bottomLeft.x + (delta.x * x);
-	float zi = bottomLeft.y + (delta.y * y);
+	double zr = bottomLeft.x + (delta.x * x);
+	double zi = bottomLeft.y + (delta.y * y);
 
 	ushort iter = 0;
 
 	for (; iter < maxIterations; ++iter)
 	{
-		float zrNext = ((zr * zr) - (zi * zi)) + c.x;
-		float ziNext = (2 * zr * zi) + c.y;
+		double zrNext = ((zr * zr) - (zi * zi)) + c.x;
+		double ziNext = (2 * zr * zi) + c.y;
 
-		if (zrNext >= 2.0f ||
-			ziNext >= 2.0f ||
+		if (fabs(zrNext) >= 2.0f ||
+			fabs(ziNext) >= 2.0f ||
 			zrNext * zrNext + ziNext * ziNext >= 4.0f)
 		{
 			break;

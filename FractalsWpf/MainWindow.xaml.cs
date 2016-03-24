@@ -15,9 +15,7 @@ namespace FractalsWpf
     public sealed partial class MainWindow : INotifyPropertyChanged
     {
         private static readonly int[] ColourMap = ColourMaps.GetColourMap("jet");
-        private readonly IFractal _mandelbrotSet = new MandelbrotSet();
         private readonly IFractal _mandelbrotSetGpu = new MandelbrotSetGpu();
-        private readonly IFractal _juliaSet = new JuliaSet();
         private readonly IFractal _juliaSetGpu = new JuliaSetGpu();
         private readonly IFractal _barnsleyFern = new BarnsleyFern();
         private IFractal _fractal;
@@ -185,9 +183,9 @@ namespace FractalsWpf
                 new Complex(-0.35, 0.65),
                 _bottomLeft,
                 _topRight,
-                MaxIterations,
                 _fractalImageWidth,
-                _fractalImageHeight));
+                _fractalImageHeight,
+                MaxIterations));
 
             var values = tuple.Item1;
             var elapsed = tuple.Item2;

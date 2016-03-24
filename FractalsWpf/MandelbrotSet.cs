@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Numerics;
 using MathNet.Numerics;
 
@@ -9,18 +8,14 @@ namespace FractalsWpf
     {
         public ushort[] CreatePixelArray(
             Complex _,
-            Complex c1,
-            Complex c2,
-            int maxIterations,
-            int numWidthDivisions,
-            int numHeightDivisions)
+            Complex bottomLeft,
+            Complex topRight,
+            int numPointsWide,
+            int numPointsHigh,
+            int maxIterations)
         {
-            var minReal = Math.Min(c1.Real, c2.Real);
-            var maxReal = Math.Max(c1.Real, c2.Real);
-            var minImaginary = Math.Min(c1.Imaginary, c2.Imaginary);
-            var maxImaginary = Math.Max(c1.Imaginary, c2.Imaginary);
-            var realValues = Generate.LinearSpaced(numWidthDivisions, minReal, maxReal);
-            var imaginaryValues = Generate.LinearSpaced(numHeightDivisions, minImaginary, maxImaginary);
+            var realValues = Generate.LinearSpaced(numPointsWide, bottomLeft.Real, topRight.Real);
+            var imaginaryValues = Generate.LinearSpaced(numPointsHigh, bottomLeft.Imaginary, topRight.Imaginary);
 
             var results =
                 from imaginary in imaginaryValues

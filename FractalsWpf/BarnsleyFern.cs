@@ -10,21 +10,17 @@ namespace FractalsWpf
     {
         public ushort[] CreatePixelArray(
             Complex _,
-            Complex c1,
-            Complex c2,
-            int maxIterations,
-            int numWidthDivisions,
-            int numHeightDivisions)
+            Complex bottomLeft,
+            Complex topRight,
+            int numPointsWide,
+            int numPointsHigh,
+            int maxIterations)
         {
-            var minReal = Math.Min(c1.Real, c2.Real);
-            var maxReal = Math.Max(c1.Real, c2.Real);
-            var minImaginary = Math.Min(c1.Imaginary, c2.Imaginary);
-            var maxImaginary = Math.Max(c1.Imaginary, c2.Imaginary);
-            var scaleX = numWidthDivisions/(maxReal - minReal);
-            var scaleY = numHeightDivisions/(maxImaginary - minImaginary);
-            var translateX = minReal;
-            var translateY = minImaginary;
-            var numResults = numWidthDivisions * numHeightDivisions;
+            var scaleX = numPointsWide/(topRight.Real - bottomLeft.Real);
+            var scaleY = numPointsHigh/(topRight.Imaginary - bottomLeft.Imaginary);
+            var translateX = bottomLeft.Real;
+            var translateY = bottomLeft.Imaginary;
+            var numResults = numPointsWide * numPointsHigh;
             var results = new ushort[numResults];
 
             foreach (var pt in Points().Take(maxIterations))
@@ -33,7 +29,7 @@ namespace FractalsWpf
                 var transformedY = (pt.Y - translateY) * scaleY;
                 var x = (int)Math.Truncate(transformedX);
                 var y = (int)Math.Truncate(transformedY);
-                results[(numHeightDivisions - y) * numWidthDivisions + x] = 1;
+                results[(numPointsHigh - y) * numPointsWide + x] = 1;
             }
 
             return results;

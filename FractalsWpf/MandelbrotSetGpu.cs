@@ -1,5 +1,4 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using OpenCL;
 
 namespace FractalsWpf
@@ -16,28 +15,24 @@ namespace FractalsWpf
 
         public ushort[] CreatePixelArray(
             Complex _,
-            Complex c1,
-            Complex c2,
-            int maxIterations,
-            int numWidthDivisions,
-            int numHeightDivisions)
+            Complex bottomLeft,
+            Complex topRight,
+            int numPointsWide,
+            int numPointsHigh,
+            int maxIterations)
         {
-            var minReal = (float)Math.Min(c1.Real, c2.Real);
-            var maxReal = (float)Math.Max(c1.Real, c2.Real);
-            var minImaginary = (float)Math.Min(c1.Imaginary, c2.Imaginary);
-            var maxImaginary = (float)Math.Max(c1.Imaginary, c2.Imaginary);
-            var deltaReal = (maxReal - minReal)/(numWidthDivisions - 1);
-            var deltaImaginary = (maxImaginary - minImaginary)/(numHeightDivisions - 1);
-            var numResults = numWidthDivisions * numHeightDivisions;
+            var deltaReal = (topRight.Real - bottomLeft.Real)/(numPointsWide - 1);
+            var deltaImaginary = (topRight.Imaginary - bottomLeft.Imaginary)/(numPointsHigh - 1);
+            var numResults = numPointsWide * numPointsHigh;
             var results = new ushort[numResults];
 
             ReallocateResultsBufferIfNecessary(numResults);
 
-            _runner.Kernel.SetValueArgument(0, new Vector2(minReal, minImaginary));
-            _runner.Kernel.SetValueArgument(1, new Vector2(deltaReal, deltaImaginary));
+            _runner.Kernel.SetValueArgument(0, bottomLeft);
+            _runner.Kernel.SetValueArgument(1, new Complex(deltaReal, deltaImaginary));
             _runner.Kernel.SetValueArgument(2, maxIterations);
             _runner.Kernel.SetMemoryArgument(3, _resultsBuffer);
-            _runner.RunKernelGlobal2D(numWidthDivisions, numHeightDivisions);
+            _runner.RunKernelGlobal2D(numPointsWide, numPointsHigh);
             _runner.ReadBuffer(_resultsBuffer, results);
             _runner.Finish();
 
