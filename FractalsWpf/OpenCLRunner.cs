@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using OpenCL;
 
 namespace FractalsWpf
@@ -53,6 +54,36 @@ namespace FractalsWpf
                     0L, // offset
                     destinationArray.Length); // region
             }
+        }
+
+        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
+        private static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
+
+        public void ReadMappedBuffer<T>(OpenCLBuffer sourceBuffer, T[] destinationArray)
+        {
+            using (var destinationArrayHandle = new PinnedObject(destinationArray))
+            {
+                var mappedPtr = MapBufferForReading(sourceBuffer);
+                var cb = (uint)(destinationArray.Length * Marshal.SizeOf(typeof(T)));
+                CopyMemory(destinationArrayHandle, mappedPtr, cb);
+                UnmapBuffer(sourceBuffer, ref mappedPtr);
+            }
+        }
+
+        public IntPtr MapBufferForReading(OpenCLBuffer buffer)
+        {
+            return CommandQueue.Map(
+                buffer,
+                true, // blocking
+                OpenCLMemoryMappingFlags.Read,
+                0, // offset
+                buffer.Length);
+        }
+
+        public void UnmapBuffer(OpenCLBuffer buffer, ref IntPtr mappedPtr)
+        {
+            if (mappedPtr == IntPtr.Zero) return;
+            CommandQueue.Unmap(buffer, ref mappedPtr);
         }
 
         public void RunKernelGlobal2D(int globalWorkSize0, int globalWorkSize1)
