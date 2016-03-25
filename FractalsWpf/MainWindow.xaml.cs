@@ -68,6 +68,8 @@ namespace FractalsWpf
 
             ZoomLevelSlider.ValueChanged += (_, args) =>
             {
+                if (!_initDone) return;
+
                 var diff = args.NewValue - args.OldValue;
 
                 foreach (var idx in Enumerable.Range(0, (int)Math.Abs(diff)))
@@ -77,15 +79,15 @@ namespace FractalsWpf
 
                     if (diff > 0)
                     {
-                        var dw = w / 8;
-                        var dh = h / 8;
+                        var dw = w / 4;
+                        var dh = h / 4;
                         BottomLeft = new Point(BottomLeft.X + dw, BottomLeft.Y + dh);
                         TopRight = new Point(TopRight.X - dw, TopRight.Y - dh);
                     }
                     else
                     {
-                        var dw = w / 8;
-                        var dh = h / 8;
+                        var dw = w / 2;
+                        var dh = h / 2;
                         BottomLeft = new Point(BottomLeft.X - dw, BottomLeft.Y - dh);
                         TopRight = new Point(TopRight.X + dw, TopRight.Y + dh);
                     }
