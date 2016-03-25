@@ -192,6 +192,7 @@ namespace FractalsWpf
             set
             {
                 _bottomLeft = value;
+                SetStatusBarRightText();
                 OnPropertyChanged();
             }
         }
@@ -201,6 +202,7 @@ namespace FractalsWpf
             set
             {
                 _topRight = value;
+                SetStatusBarRightText();
                 OnPropertyChanged();
             }
         }
@@ -252,6 +254,16 @@ namespace FractalsWpf
             _selectedFractal = _isGpuDataTypeDouble ? _mandelbrotSetGpuDouble : _mandelbrotSetGpuFloat;
         }
 
+        private void SetStatusBarLeftText(TimeSpan elapsedTime1, TimeSpan elapsedTime2, TimeSpan elapsedTime3)
+        {
+            StatusBarLeftText.Text = $"{_selectedFractal.GetType().Name}: {elapsedTime1.TotalMilliseconds}ms; {elapsedTime2.TotalMilliseconds}ms; {elapsedTime3.TotalMilliseconds}ms";
+        }
+
+        private void SetStatusBarRightText()
+        {
+            StatusBarRightText.Text = $"Region: ({BottomLeft.X}, {BottomLeft.Y}) ({TopRight.X}, {TopRight.Y})";
+        }
+
         private void Render()
         {
             if (!_initDone) return;
@@ -276,7 +288,7 @@ namespace FractalsWpf
                 _writeableBitmap.WritePixels(sourceRect, pixels, _writeableBitmap.BackBufferStride, 0);
             });
 
-            StatusBarText.Text = $"{_selectedFractal.GetType().Name}: {elapsedTime1.TotalMilliseconds}ms; {elapsedTime2.TotalMilliseconds}ms; {elapsedTime3.TotalMilliseconds}ms";
+            SetStatusBarLeftText(elapsedTime1, elapsedTime2, elapsedTime3);
         }
 
         private static int[] ValuesToPixels(ushort[] values, IReadOnlyList<int> colourMap)
