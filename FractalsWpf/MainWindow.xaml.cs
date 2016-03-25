@@ -25,6 +25,7 @@ namespace FractalsWpf
         private int _fractalImageHeight;
         private WriteableBitmap _writeableBitmap;
         private int _maxIterations;
+        private int _previousZoomLevel;
         private int _zoomLevel;
         private Point _bottomLeft;
         private Point _topRight;
@@ -59,6 +60,7 @@ namespace FractalsWpf
 
                 MaxIterations = 120;
                 ZoomLevel = 1;
+                _previousZoomLevel = 1;
                 IsGpuDataTypeDouble = false;
 
                 _initDone = true;
@@ -70,9 +72,11 @@ namespace FractalsWpf
             {
                 if (!_initDone) return;
 
-                var diff = args.NewValue - args.OldValue;
+                if (ZoomLevel == _previousZoomLevel) return;
 
-                foreach (var idx in Enumerable.Range(0, (int)Math.Abs(diff)))
+                var diff = ZoomLevel - _previousZoomLevel;
+
+                foreach (var idx in Enumerable.Range(0, Math.Abs(diff)))
                 {
                     var w = TopRight.X - BottomLeft.X;
                     var h = TopRight.Y - BottomLeft.Y;
@@ -94,6 +98,8 @@ namespace FractalsWpf
                 }
 
                 Render();
+
+                _previousZoomLevel = ZoomLevel;
             };
 
             MaxIterationsSlider.ValueChanged += (_, __) =>
@@ -121,8 +127,25 @@ namespace FractalsWpf
             var lastMousePt = new Point();
             var panningInProgress = false;
 
-            MouseDown += (_, __) =>
+            MouseDown += (_, args) =>
             {
+                if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                {
+                    var mousePt = Mouse.GetPosition(FractalImage);
+                    var regionWidth = TopRight.X - BottomLeft.X;
+                    var regionHeight = TopRight.Y - BottomLeft.Y;
+                    var regionCentreX = BottomLeft.X + regionWidth/2;
+                    var regionCentreY = BottomLeft.Y + regionHeight/2;
+                    var regionMouseX = mousePt.X*regionWidth/_fractalImageWidth + BottomLeft.X;
+                    var regionMouseY = mousePt.Y*regionHeight/_fractalImageHeight + BottomLeft.Y;
+                    var dx = regionMouseX - regionCentreX;
+                    var dy = regionMouseY - regionCentreY;
+                    BottomLeft = new Point(BottomLeft.X + dx, BottomLeft.Y + dy);
+                    TopRight = new Point(TopRight.X + dx, TopRight.Y + dy);
+                    Render();
+                    return;
+                }
+
                 lastMousePt = Mouse.GetPosition(FractalImage);
                 panningInProgress = true;
             };
