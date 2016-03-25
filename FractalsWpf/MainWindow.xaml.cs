@@ -19,15 +19,14 @@ namespace FractalsWpf
         private readonly IFractal _mandelbrotSetGpuDouble = new MandelbrotSetGpuDouble();
         private readonly IFractal _juliaSetGpuFloat = new JuliaSetGpuFloat();
         private readonly IFractal _juliaSetGpuDouble = new JuliaSetGpuDouble();
-        private readonly IFractal _barnsleyFern = new BarnsleyFern();
         private IFractal _fractal;
         private int _fractalImageWidth;
         private int _fractalImageHeight;
         private WriteableBitmap _writeableBitmap;
         private int _maxIterations;
         private int _zoomLevel;
-        private Complex _bottomLeft;
-        private Complex _topRight;
+        private Point _bottomLeft;
+        private Point _topRight;
         private bool _initDone;
 
         public MainWindow()
@@ -37,23 +36,23 @@ namespace FractalsWpf
 
             ContentRendered += (_, __) =>
             {
-                //_bottomLeft = new Complex(-2d, -2d);
-                //_topRight = new Complex(2d, 2d);
+                //BottomLeft = new Point(-2d, -2d);
+                //TopRight = new Point(2d, 2d);
 
-                _bottomLeft = new Complex(-2.25d, -1.5d);
-                _topRight = new Complex(0.75d, 1.5d);
+                BottomLeft = new Point(-2.25d, -1.5d);
+                TopRight = new Point(0.75d, 1.5d);
 
-                //_bottomLeft = new Complex(-1.5d, -0.5d);
-                //_topRight = new Complex(-0.5d, 0.5d);
+                //BottomLeft = new Point(-1.5d, -0.5d);
+                //TopRight = new Point(-0.5d, 0.5d);
 
-                //_bottomLeft = new Complex(-0.0d, -0.9d);
-                //_topRight = new Complex(0.6d, -0.3d);
+                //BottomLeft = new Point(-0.0d, -0.9d);
+                //TopRight = new Point(0.6d, -0.3d);
 
-                //_bottomLeft = new Complex(-0.22d, -0.70d);
-                //_topRight = new Complex(-0.21d, -0.69d);
+                //BottomLeft = new Point(-0.22d, -0.70d);
+                //TopRight = new Point(-0.21d, -0.69d);
 
-                //_bottomLeft = new Complex(-3d, -1d);
-                //_topRight = new Complex(3d, 11d);
+                //BottomLeft = new Point(-3d, -1d);
+                //TopRight = new Point(3d, 11d);
 
                 AdjustAspectRatio();
 
@@ -72,23 +71,22 @@ namespace FractalsWpf
 
                 foreach (var idx in Enumerable.Range(0, (int)Math.Abs(diff)))
                 {
+                    var w = TopRight.X - BottomLeft.X;
+                    var h = TopRight.Y - BottomLeft.Y;
+
                     if (diff > 0)
                     {
-                        var w = _topRight.Real - _bottomLeft.Real;
-                        var h = _topRight.Imaginary - _bottomLeft.Imaginary;
                         var dw = w / 8;
                         var dh = h / 8;
-                        _bottomLeft = new Complex(_bottomLeft.Real + dw, _bottomLeft.Imaginary + dh);
-                        _topRight = new Complex(_topRight.Real - dw, _topRight.Imaginary - dh);
+                        BottomLeft = new Point(BottomLeft.X + dw, BottomLeft.Y + dh);
+                        TopRight = new Point(TopRight.X - dw, TopRight.Y - dh);
                     }
                     else
                     {
-                        var w = _topRight.Real - _bottomLeft.Real;
-                        var h = _topRight.Imaginary - _bottomLeft.Imaginary;
                         var dw = w / 4;
                         var dh = h / 4;
-                        _bottomLeft = new Complex(_bottomLeft.Real - dw, _bottomLeft.Imaginary - dh);
-                        _topRight = new Complex(_topRight.Real + dw, _topRight.Imaginary + dh);
+                        BottomLeft = new Point(BottomLeft.X - dw, BottomLeft.Y - dh);
+                        TopRight = new Point(TopRight.X + dw, TopRight.Y + dh);
                     }
                 }
 
@@ -132,12 +130,12 @@ namespace FractalsWpf
                 var currentMousePt = Mouse.GetPosition(FractalImage);
                 var mouseDx = currentMousePt.X - lastMousePt.X;
                 var mouseDy = currentMousePt.Y - lastMousePt.Y;
-                var regionWidth = _topRight.Real - _bottomLeft.Real;
-                var regionHeight = _topRight.Imaginary - _bottomLeft.Imaginary;
+                var regionWidth = TopRight.X - BottomLeft.X;
+                var regionHeight = TopRight.Y - BottomLeft.Y;
                 var regionDx = mouseDx / _fractalImageWidth * regionWidth;
                 var regionDy = mouseDy / _fractalImageHeight * regionHeight;
-                _bottomLeft = new Complex(_bottomLeft.Real - regionDx, _bottomLeft.Imaginary - regionDy);
-                _topRight = new Complex(_topRight.Real - regionDx, _topRight.Imaginary - regionDy);
+                BottomLeft = new Point(BottomLeft.X - regionDx, BottomLeft.Y - regionDy);
+                TopRight = new Point(TopRight.X - regionDx, TopRight.Y - regionDy);
                 Render();
                 lastMousePt = currentMousePt;
             };
@@ -162,19 +160,19 @@ namespace FractalsWpf
         {
             if (_fractalImageWidth > _fractalImageHeight)
             {
-                var regionWidth = _topRight.Real - _bottomLeft.Real;
+                var regionWidth = TopRight.X - BottomLeft.X;
                 var newRegionWidthDiff = _fractalImageWidth*regionWidth/_fractalImageHeight - regionWidth;
                 var halfNewRegionWidthDiff = newRegionWidthDiff/2;
-                _bottomLeft = new Complex(_bottomLeft.Real - halfNewRegionWidthDiff, _bottomLeft.Imaginary);
-                _topRight = new Complex(_topRight.Real + halfNewRegionWidthDiff, _topRight.Imaginary);
+                BottomLeft = new Point(BottomLeft.X - halfNewRegionWidthDiff, BottomLeft.Y);
+                TopRight = new Point(TopRight.X + halfNewRegionWidthDiff, TopRight.Y);
             }
             else if (_fractalImageHeight > _fractalImageWidth)
             {
-                var regionHeight = _topRight.Imaginary - _bottomLeft.Imaginary;
+                var regionHeight = TopRight.Y - BottomLeft.Y;
                 var newRegionHeightDiff = _fractalImageHeight*regionHeight/_fractalImageWidth - regionHeight;
                 var halfNewRegionHeightDiff = newRegionHeightDiff/2;
-                _bottomLeft = new Complex(_bottomLeft.Real, _bottomLeft.Imaginary - halfNewRegionHeightDiff);
-                _topRight = new Complex(_topRight.Real, _topRight.Imaginary + halfNewRegionHeightDiff);
+                BottomLeft = new Point(BottomLeft.X, BottomLeft.Y - halfNewRegionHeightDiff);
+                TopRight = new Point(TopRight.X, TopRight.Y + halfNewRegionHeightDiff);
             }
 
             _writeableBitmap = new WriteableBitmap(
@@ -186,6 +184,24 @@ namespace FractalsWpf
                 null);
 
             FractalImage.Source = _writeableBitmap;
+        }
+
+        public Point BottomLeft {
+            get { return _bottomLeft; }
+            set
+            {
+                _bottomLeft = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Point TopRight {
+            get { return _topRight; }
+            set
+            {
+                _topRight = value;
+                OnPropertyChanged();
+            }
         }
 
         public int MaxIterations
@@ -212,28 +228,27 @@ namespace FractalsWpf
         {
             if (!_initDone) return;
 
-            var tuple = TimeIt(() => _fractal.CreatePixelArray(
+            var tuple1 = TimeIt(() => _fractal.CreatePixelArray(
                 new Complex(-0.35, 0.65),
-                _bottomLeft,
-                _topRight,
+                new Complex(BottomLeft.X, BottomLeft.Y), 
+                new Complex(TopRight.X, TopRight.Y), 
                 _fractalImageWidth,
                 _fractalImageHeight,
                 MaxIterations));
+            var values = tuple1.Item1;
+            var elapsedTime1 = tuple1.Item2;
 
-            var values = tuple.Item1;
-            var elapsed = tuple.Item2;
-            StatusBarText.Text = $"{_fractal.GetType().Name}: {elapsed.TotalMilliseconds}ms";
+            var tuple2 = TimeIt(() => ValuesToPixels(values, ColourMap));
+            var pixels = tuple2.Item1;
+            var elapsedTime2 = tuple2.Item2;
 
-            //var pixels = BarnsleyFern.CreatePixelArray(
-            //    fractalImageWidth,
-            //    fractalImageHeight,
-            //    Colors.ForestGreen.ToInt(),
-            //    10000000);
+            var elapsedTime3 = TimeIt(() =>
+            {
+                var sourceRect = new Int32Rect(0, 0, _fractalImageWidth, _fractalImageHeight);
+                _writeableBitmap.WritePixels(sourceRect, pixels, _writeableBitmap.BackBufferStride, 0);
+            });
 
-            var pixels = ValuesToPixels(values, ColourMap);
-
-            var sourceRect = new Int32Rect(0, 0, _fractalImageWidth, _fractalImageHeight);
-            _writeableBitmap.WritePixels(sourceRect, pixels, _writeableBitmap.BackBufferStride, 0);
+            StatusBarText.Text = $"{_fractal.GetType().Name}: {elapsedTime1.TotalMilliseconds}ms; {elapsedTime2.TotalMilliseconds}ms; {elapsedTime3.TotalMilliseconds}ms";
         }
 
         private static int[] ValuesToPixels(ushort[] values, IReadOnlyList<int> colourMap)
@@ -249,12 +264,20 @@ namespace FractalsWpf
             return normalisedValues.Select(p => colourMap[(int)Math.Floor(p * lastIndex)]).ToArray();
         }
 
-        private static Tuple<T, TimeSpan> TimeIt<T>(Func<T> f)
+        private static Tuple<T, TimeSpan> TimeIt<T>(Func<T> func)
         {
             var stopwatch = Stopwatch.StartNew();
-            var result = f();
+            var result = func();
             stopwatch.Stop();
             return Tuple.Create(result, stopwatch.Elapsed);
+        }
+
+        private static TimeSpan TimeIt(Action action)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            action();
+            stopwatch.Stop();
+            return stopwatch.Elapsed;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
