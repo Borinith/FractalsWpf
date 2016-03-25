@@ -5,10 +5,12 @@
         Height="500"
         Width="750"
         WindowState="Maximized"
-        ResizeMode="CanResizeWithGrip">
-    
+        ResizeMode="CanResizeWithGrip"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+
     <Grid>
-        
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -55,7 +57,6 @@
                 <TextBlock x:Name="StatusBarRightText" TextAlignment="Right" />
             </StatusBarItem>
         </StatusBar>
-        
     </Grid>
     
 </Window>
