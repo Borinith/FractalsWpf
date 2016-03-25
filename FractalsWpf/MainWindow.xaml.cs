@@ -19,7 +19,8 @@ namespace FractalsWpf
         private readonly IFractal _mandelbrotSetGpuDouble = new MandelbrotSetGpuDouble();
         private readonly IFractal _juliaSetGpuFloat = new JuliaSetGpuFloat();
         private readonly IFractal _juliaSetGpuDouble = new JuliaSetGpuDouble();
-        private IFractal _fractal;
+        private bool _isGpuDataTypeDouble;
+        private IFractal _selectedFractal;
         private int _fractalImageWidth;
         private int _fractalImageHeight;
         private WriteableBitmap _writeableBitmap;
@@ -58,8 +59,8 @@ namespace FractalsWpf
 
                 MaxIterations = 120;
                 ZoomLevel = 1;
+                IsGpuDataTypeDouble = false;
 
-                _fractal = _mandelbrotSetGpuDouble;
                 _initDone = true;
 
                 Render();
@@ -83,8 +84,8 @@ namespace FractalsWpf
                     }
                     else
                     {
-                        var dw = w / 4;
-                        var dh = h / 4;
+                        var dw = w / 8;
+                        var dh = h / 8;
                         BottomLeft = new Point(BottomLeft.X - dw, BottomLeft.Y - dh);
                         TopRight = new Point(TopRight.X + dw, TopRight.Y + dh);
                     }
@@ -152,7 +153,7 @@ namespace FractalsWpf
 
             Closed += (_, __) =>
             {
-                _fractal.Dispose();
+                _selectedFractal.Dispose();
             };
         }
 
@@ -224,11 +225,38 @@ namespace FractalsWpf
             }
         }
 
+        public bool IsGpuDataTypeFloat {
+            get { return !_isGpuDataTypeDouble; }
+            set
+            {
+                _isGpuDataTypeDouble = !value;
+                OnPropertyChanged();
+                UpdateSelectedFractal();
+                Render();
+            }
+        }
+
+        public bool IsGpuDataTypeDouble {
+            get { return _isGpuDataTypeDouble; }
+            set
+            {
+                _isGpuDataTypeDouble = value;
+                OnPropertyChanged();
+                UpdateSelectedFractal();
+                Render();
+            }
+        }
+
+        private void UpdateSelectedFractal()
+        {
+            _selectedFractal = _isGpuDataTypeDouble ? _mandelbrotSetGpuDouble : _mandelbrotSetGpuFloat;
+        }
+
         private void Render()
         {
             if (!_initDone) return;
 
-            var tuple1 = TimeIt(() => _fractal.CreatePixelArray(
+            var tuple1 = TimeIt(() => _selectedFractal.CreatePixelArray(
                 new Complex(-0.35, 0.65),
                 new Complex(BottomLeft.X, BottomLeft.Y), 
                 new Complex(TopRight.X, TopRight.Y), 
@@ -248,7 +276,7 @@ namespace FractalsWpf
                 _writeableBitmap.WritePixels(sourceRect, pixels, _writeableBitmap.BackBufferStride, 0);
             });
 
-            StatusBarText.Text = $"{_fractal.GetType().Name}: {elapsedTime1.TotalMilliseconds}ms; {elapsedTime2.TotalMilliseconds}ms; {elapsedTime3.TotalMilliseconds}ms";
+            StatusBarText.Text = $"{_selectedFractal.GetType().Name}: {elapsedTime1.TotalMilliseconds}ms; {elapsedTime2.TotalMilliseconds}ms; {elapsedTime3.TotalMilliseconds}ms";
         }
 
         private static int[] ValuesToPixels(ushort[] values, IReadOnlyList<int> colourMap)
