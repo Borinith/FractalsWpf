@@ -12,5 +12,7 @@ namespace FractalsWpf
             int numPointsWide,
             int numPointsHigh,
             int maxIterations);
+        // Could add timings parameter:
+        // out Tuple<TimeSpan, TimeSpan> timings
     }
 }

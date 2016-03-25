@@ -70,7 +70,7 @@ namespace FractalsWpf
             }
         }
 
-        public IntPtr MapBufferForReading(OpenCLBuffer buffer)
+        private IntPtr MapBufferForReading(OpenCLBufferBase buffer)
         {
             return CommandQueue.Map(
                 buffer,
@@ -80,8 +80,9 @@ namespace FractalsWpf
                 buffer.Length);
         }
 
-        public void UnmapBuffer(OpenCLBuffer buffer, ref IntPtr mappedPtr)
+        private void UnmapBuffer(OpenCLBuffer buffer, ref IntPtr mappedPtr)
         {
+            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
             if (mappedPtr == IntPtr.Zero) return;
             CommandQueue.Unmap(buffer, ref mappedPtr);
         }
