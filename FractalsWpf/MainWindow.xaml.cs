@@ -20,6 +20,8 @@ namespace FractalsWpf
         private readonly IFractal _mandelbrotSetGpuDouble = new MandelbrotSetGpuDouble();
         private readonly IFractal _juliaSetGpuFloat = new JuliaSetGpuFloat();
         private readonly IFractal _juliaSetGpuDouble = new JuliaSetGpuDouble();
+        private Point _juliaConstant = new Point(-0.35, 0.65);
+        private bool _isMandelbotSet;
         private bool _isGpuDataTypeDouble;
         private IFractal _selectedFractal;
         private int _fractalImageWidth;
@@ -62,7 +64,8 @@ namespace FractalsWpf
                 MaxIterations = 120;
                 ZoomLevel = 1;
                 _previousZoomLevel = 1;
-                IsGpuDataTypeDouble = false;
+                IsMandelbrotSet = true;
+                IsGpuDataTypeDouble = true;
 
                 _initDone = true;
 
@@ -177,6 +180,20 @@ namespace FractalsWpf
                 panningInProgress = false;
             };
 
+            MouseRightButtonDown += (_, __) =>
+            {
+                if (IsMandelbrotSet)
+                {
+                    var mousePt = Mouse.GetPosition(FractalImage);
+                    var regionWidth = TopRight.X - BottomLeft.X;
+                    var regionHeight = TopRight.Y - BottomLeft.Y;
+                    var regionMouseX = mousePt.X * regionWidth / _fractalImageWidth + BottomLeft.X;
+                    var regionMouseY = mousePt.Y * regionHeight / _fractalImageHeight + BottomLeft.Y;
+                    _juliaConstant = new Point(regionMouseX, regionMouseY);
+                    IsJuliaSet = true;
+                }
+            };
+
             Closed += (_, __) =>
             {
                 _selectedFractal.Dispose();
@@ -268,6 +285,30 @@ namespace FractalsWpf
             }
         }
 
+        public bool IsMandelbrotSet
+        {
+            get { return _isMandelbotSet; }
+            set
+            {
+                _isMandelbotSet = value;
+                OnPropertyChanged();
+                UpdateSelectedFractal();
+                Render();
+            }
+        }
+
+        public bool IsJuliaSet
+        {
+            get { return !_isMandelbotSet; }
+            set
+            {
+                _isMandelbotSet = !value;
+                OnPropertyChanged();
+                UpdateSelectedFractal();
+                Render();
+            }
+        }
+
         public bool IsGpuDataTypeFloat {
             get { return !_isGpuDataTypeDouble; }
             set
@@ -292,7 +333,15 @@ namespace FractalsWpf
 
         private void UpdateSelectedFractal()
         {
-            _selectedFractal = _isGpuDataTypeDouble ? _mandelbrotSetGpuDouble : _mandelbrotSetGpuFloat;
+            var dict = new Dictionary<Tuple<bool, bool>, IFractal>
+            {
+                { Tuple.Create(true, true), _mandelbrotSetGpuDouble},
+                { Tuple.Create(true, false), _mandelbrotSetGpuFloat},
+                { Tuple.Create(false, true), _juliaSetGpuDouble},
+                { Tuple.Create(false, false), _juliaSetGpuFloat}
+            };
+
+            _selectedFractal = dict[Tuple.Create(_isMandelbotSet, _isGpuDataTypeDouble)];
         }
 
         private void SetStatusBarLeftText(TimeSpan elapsedTime1, TimeSpan elapsedTime2, TimeSpan elapsedTime3)
@@ -310,7 +359,7 @@ namespace FractalsWpf
             if (!_initDone) return;
 
             var tuple1 = TimeIt(() => _selectedFractal.CreatePixelArray(
-                new Complex(-0.35, 0.65),
+                new Complex(_juliaConstant.X, _juliaConstant.Y),
                 new Complex(BottomLeft.X, BottomLeft.Y), 
                 new Complex(TopRight.X, TopRight.Y), 
                 _fractalImageWidth,

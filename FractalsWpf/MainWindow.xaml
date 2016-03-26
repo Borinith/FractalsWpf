@@ -34,7 +34,7 @@
                             <Label VerticalAlignment="Center">Zoom level:</Label>
                             <TextBlock VerticalAlignment="Center" Text="{Binding Path=ZoomLevel}" />
                         </StackPanel>
-                        <Slider x:Name="ZoomLevelSlider" Orientation="Vertical" Minimum="1" Maximum="100" Value="{Binding Path=ZoomLevel}" Height="400" Margin="20" />
+                        <Slider x:Name="ZoomLevelSlider" Orientation="Vertical" TickPlacement="BottomRight" Minimum="1" Maximum="100" Value="{Binding Path=ZoomLevel}" Height="400" Margin="20" />
                     </StackPanel>
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
@@ -44,12 +44,17 @@
                         <Slider x:Name="MaxIterationsSlider" Orientation="Vertical" Minimum="10" Maximum="4096" Value="{Binding Path=MaxIterations}" Height="400" Margin="20" />
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                    <Label VerticalAlignment="Center">GPU data type:</Label>
-                    <RadioButton GroupName="GpuDataType" IsChecked="{Binding Path=IsGpuDataTypeFloat}" VerticalAlignment="Center">Float</RadioButton>
-                    <RadioButton GroupName="GpuDataType" IsChecked="{Binding Path=IsGpuDataTypeDouble}" VerticalAlignment="Center">Double</RadioButton>
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <Label VerticalAlignment="Center">Fractal:</Label>
+                    <RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsMandelbrotSet}" VerticalAlignment="Center" Margin="0,0,8,0">Mandelbrot Set</RadioButton>
+                    <RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsJuliaSet}" VerticalAlignment="Center" Margin="0,0,8,0">Julia Set</RadioButton>
                 </StackPanel>
-                <Button x:Name="SetRegionBtn" Width="120" Margin="10">Set region</Button>
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <Label VerticalAlignment="Center">GPU data type:</Label>
+                    <RadioButton GroupName="GpuDataType" IsChecked="{Binding Path=IsGpuDataTypeFloat}" VerticalAlignment="Center" Margin="0,0,8,0">Float</RadioButton>
+                    <RadioButton GroupName="GpuDataType" IsChecked="{Binding Path=IsGpuDataTypeDouble}" VerticalAlignment="Center" Margin="0,0,8,0">Double</RadioButton>
+                </StackPanel>
+                <Button x:Name="SetRegionBtn" Width="120" Margin="8">Set region</Button>
             </StackPanel>
 
             <StatusBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
