@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using MaterialDesignThemes.Wpf;
 
 namespace FractalsWpf
 {
@@ -180,6 +181,21 @@ namespace FractalsWpf
             {
                 _selectedFractal.Dispose();
             };
+
+            SetRegionBtn.Click += async (_, __) =>
+            {
+                var setRegionDialog = new SetRegionDialog();
+                var result = (bool)await DialogHost.Show(setRegionDialog, "RootDialog", SetRegionDialogClosing);
+                if (!result) return;
+                BottomLeft = new Point(setRegionDialog.BottomLeftX, setRegionDialog.BottomLeftY);
+                TopRight = new Point(setRegionDialog.TopRightX, setRegionDialog.TopRightY);
+                AdjustAspectRatio();
+                Render();
+            };
+        }
+
+        private static void SetRegionDialogClosing(object _, DialogClosingEventArgs __)
+        {
         }
 
         private void AdjustAspectRatio()

@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="FractalsWpf.SetRegionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        Height="250"
+        Width="400"
+    >
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" TextWrapping="Wrap" Margin="8">
+            Enter values for the bottom-left and top-right corners of the region you wish to view.
+        </TextBlock>
+        
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            
+            <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom">Bottom left:</Label>
+            <TextBox md:TextFieldAssist.Hint="X" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                 Margin="0,0,8,0" FontSize="16" Grid.Row="0" Grid.Column="1" Text="{Binding Path=BottomLeftX}" />
+            <TextBox md:TextFieldAssist.Hint="Y" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                 Margin="0,0,8,0" FontSize="16" Grid.Row="0" Grid.Column="2" Text="{Binding Path=BottomLeftY}" />
+
+            <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">Top right:</Label>
+            <TextBox md:TextFieldAssist.Hint="X" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                 Margin="0,0,8,0" FontSize="16" Grid.Row="1" Grid.Column="1" Text="{Binding Path=TopRightX}" />
+            <TextBox md:TextFieldAssist.Hint="Y" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                 Margin="0,0,8,0" FontSize="16" Grid.Row="1" Grid.Column="2" Text="{Binding Path=TopRightY}" />
+        </Grid>
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button IsCancel="True" Margin="0,8,8,8" Command="{x:Static md:DialogHost.CloseDialogCommand}">
+                <Button.CommandParameter>
+                    <system:Boolean>false</system:Boolean>
+                </Button.CommandParameter>
+                Cancel
+            </Button>
+            <Button IsDefault="True" Margin="0,8,8,8" Command="{x:Static md:DialogHost.CloseDialogCommand}">
+                <Button.CommandParameter>
+                    <system:Boolean>true</system:Boolean>
+                </Button.CommandParameter>
+                OK</Button>
+        </StackPanel>
+    </Grid>
+    
+</UserControl>
