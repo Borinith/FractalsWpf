@@ -45,10 +45,40 @@ namespace FractalsWpf
                 }
             };
 
+        private static readonly Dictionary<string, double[][]> GistSternData = new Dictionary<string, double[][]>
+            {
+                {
+                    "red", new[]
+                    {
+                        new[] {0d, 0, 0},
+                        new[] {0.0547, 1, 1},
+                        new[] {0.250, 0.027, 0.250},
+                        new[] {1d, 1, 1}
+                    }
+                },
+                {
+                    "green", new[]
+                    {
+                        new[] {0d, 0, 0},
+                        new[] {1d, 0, 0}
+                    }
+                },
+                {
+                    "blue", new[]
+                    {
+                        new[] {0d, 0, 0},
+                        new[] {0.5, 1, 1},
+                        new[] {0.735, 0, 0},
+                        new[] {1d, 0, 0}
+                    }
+                }
+            };
+
         private static readonly Dictionary<string, Dictionary<string, double[][]>> DataDictionary =
             new Dictionary<string, Dictionary<string, double[][]>>(StringComparer.InvariantCultureIgnoreCase)
         {
-                { "jet", JetData}
+                { "jet", JetData},
+                { "gist_stern", GistSternData}
         };
     }
 }

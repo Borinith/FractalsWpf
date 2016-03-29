@@ -1,7 +1,7 @@
 
 ## Description
 
-This repo is my attempt at exploring fractals in C# / WPF.
+This repo is my attempt at exploring fractals in C# / WPF / OpenCL.
 
 ## TODO
 
@@ -45,9 +45,9 @@ obtain the same results. Here are links to the relevant Python source code files
     * see *makeMappingArray* and *LinearSegmentedColormap*
 
 Having made a colour map, the next step was to map each value in the fractal data
-to a colour in the colour map. Each value represents the iteration number at which
+to an entry in the colour map. Each value represents the iteration number at which
 a given point diverges. I use the following code to normalise the values and then map
-them to an entry in the colour map:
+them to entries in the colour map:
 
 ```C#
 private static int[] ValuesToPixels(int[] values, IReadOnlyList<int> colourMap)

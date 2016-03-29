@@ -15,7 +15,15 @@ namespace FractalsWpf
 {
     public sealed partial class MainWindow : INotifyPropertyChanged
     {
-        private static readonly int[] ColourMap = ColourMaps.GetColourMap("jet");
+        private static readonly int[] JetColourMap = ColourMaps.GetColourMap("jet");
+        private static readonly int[] GistSternColourMap = ColourMaps.GetColourMap("gist_stern");
+        private static readonly int[] MonochromeColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] {Colors.Black.ToInt()}).ToArray();
+        public static List<Tuple<string, int[]>> MyColourMaps => new List<Tuple<string, int[]>>
+        {
+            Tuple.Create("Jet", JetColourMap),
+            Tuple.Create("GistStern", GistSternColourMap),
+            Tuple.Create("Monochrome", MonochromeColourMap)
+        };
         private readonly IFractal _mandelbrotSetGpuFloat = new MandelbrotSetGpuFloat();
         private readonly IFractal _mandelbrotSetGpuDouble = new MandelbrotSetGpuDouble();
         private readonly IFractal _juliaSetGpuFloat = new JuliaSetGpuFloat();
@@ -33,6 +41,7 @@ namespace FractalsWpf
         private Point _bottomLeft;
         private Point _topRight;
         private bool _initDone;
+        private int[] _selectedColourMap;
 
         public MainWindow()
         {
@@ -66,6 +75,7 @@ namespace FractalsWpf
                 _previousZoomLevel = 1;
                 IsMandelbrotSet = true;
                 IsGpuDataTypeDouble = true;
+                SelectedColourMap = MyColourMaps[0].Item2;
 
                 _initDone = true;
 
@@ -331,6 +341,17 @@ namespace FractalsWpf
             }
         }
 
+        public int[] SelectedColourMap
+        {
+            get { return _selectedColourMap; }
+            set
+            {
+                _selectedColourMap = value;
+                OnPropertyChanged();
+                Render();
+            }
+        }
+
         private void UpdateSelectedFractal()
         {
             var dict = new Dictionary<Tuple<bool, bool>, IFractal>
@@ -368,7 +389,7 @@ namespace FractalsWpf
             var values = tuple1.Item1;
             var elapsedTime1 = tuple1.Item2;
 
-            var tuple2 = TimeIt(() => ValuesToPixels(values, ColourMap));
+            var tuple2 = TimeIt(() => ValuesToPixels(values, _selectedColourMap));
             var pixels = tuple2.Item1;
             var elapsedTime2 = tuple2.Item2;
 

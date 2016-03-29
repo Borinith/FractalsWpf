@@ -54,7 +54,15 @@
                     <RadioButton GroupName="GpuDataType" IsChecked="{Binding Path=IsGpuDataTypeFloat}" VerticalAlignment="Center" Margin="0,0,8,0">Float</RadioButton>
                     <RadioButton GroupName="GpuDataType" IsChecked="{Binding Path=IsGpuDataTypeDouble}" VerticalAlignment="Center" Margin="0,0,8,0">Double</RadioButton>
                 </StackPanel>
-                <Button x:Name="SetRegionBtn" Width="120" Margin="8">Set region</Button>
+                <Grid HorizontalAlignment="Left" Margin="8">
+                    <ComboBox x:Name="ColourMapComboBox" Width="150" ItemsSource="{Binding Path=MyColourMaps}" DisplayMemberPath="Item1" SelectedValuePath="Item2" SelectedValue="{Binding Path=SelectedColourMap}">
+                        <!--<ComboBoxItem IsSelected="True">Jet</ComboBoxItem>
+                        <ComboBoxItem>Monochrome</ComboBoxItem>-->
+                    </ComboBox>
+                </Grid>
+                <Grid HorizontalAlignment="Left" Margin="8">
+                    <Button x:Name="SetRegionBtn">Set region</Button>
+                </Grid>
             </StackPanel>
 
             <StatusBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
