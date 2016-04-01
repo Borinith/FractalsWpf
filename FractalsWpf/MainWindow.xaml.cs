@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -435,17 +436,32 @@ namespace FractalsWpf
             SetStatusBarLeftText(elapsedTime1, elapsedTime2, elapsedTime3);
         }
 
-        private static int[] ValuesToPixels(ushort[] values, IReadOnlyList<int> colourMap)
+        private static int[] ValuesToPixels(IReadOnlyList<ushort> values, IReadOnlyList<int> colourMap)
         {
             var lastIndex = colourMap.Count - 1;
-            var vmin = (double)values.Min();
-            var vmax = (double)values.Max();
+
+            var vmin = double.MaxValue;
+            var vmax = double.MinValue;
+
+            foreach (var value in values)
+            {
+                if (value < vmin) vmin = value;
+                if (value > vmax) vmax = value;
+            }
+
             var divisor = vmax - vmin;
-            var normalisedValues = values
-                .Select(p => (p - vmin)/divisor)
-                .Select(p => double.IsNaN(p) ? 0d : p)
-                .ToArray();
-            return normalisedValues.Select(p => colourMap[(int)Math.Floor(p * lastIndex)]).ToArray();
+
+            var cs = new int[values.Count];
+            Parallel.For(0, values.Count, i =>
+            {
+                var p = values[i];
+                var v1 = (p - vmin)/divisor;
+                var v2 = double.IsNaN(v1) ? 0d : v1;
+                var c = colourMap[(int) Math.Floor(v2*lastIndex)];
+                cs[i] = c;
+            });
+
+            return cs;
         }
 
         private static Tuple<T, TimeSpan> TimeIt<T>(Func<T> func)
