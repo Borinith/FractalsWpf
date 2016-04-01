@@ -13,25 +13,35 @@ using MaterialDesignThemes.Wpf;
 
 namespace FractalsWpf
 {
+    public enum FractalType
+    {
+        MandelbrotSet,
+        JuliaSet,
+        BarnsleyFern
+    }
+
     public sealed partial class MainWindow : INotifyPropertyChanged
     {
         private static readonly int[] JetColourMap = ColourMaps.GetColourMap("jet");
         private static readonly int[] GistSternColourMap = ColourMaps.GetColourMap("gist_stern");
+        private static readonly int[] ForestGreenColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] {Colors.ForestGreen.ToInt()}).ToArray();
         private static readonly int[] MonochromeColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] {Colors.Black.ToInt()}).ToArray();
-        public static List<Tuple<string, int[]>> MyColourMaps => new List<Tuple<string, int[]>>
+        public static List<Tuple<string, int[]>> AvailableColourMaps => new List<Tuple<string, int[]>>
         {
             Tuple.Create("Jet", JetColourMap),
             Tuple.Create("GistStern", GistSternColourMap),
+            Tuple.Create("ForestGreen", ForestGreenColourMap),
             Tuple.Create("Monochrome", MonochromeColourMap)
         };
         private readonly IFractal _mandelbrotSetGpuFloat = new MandelbrotSetGpuFloat();
         private readonly IFractal _mandelbrotSetGpuDouble = new MandelbrotSetGpuDouble();
         private readonly IFractal _juliaSetGpuFloat = new JuliaSetGpuFloat();
         private readonly IFractal _juliaSetGpuDouble = new JuliaSetGpuDouble();
-        private Point _juliaConstant = new Point(-0.35, 0.65);
-        private bool _isMandelbotSet;
-        private bool _isGpuDataTypeDouble;
+        private readonly IFractal _barnsleyFern = new BarnsleyFern();
         private IFractal _selectedFractal;
+        private FractalType _fractalType;
+        private Point _juliaConstant = new Point(-0.35, 0.65);
+        private bool _isGpuDataTypeDouble;
         private int _fractalImageWidth;
         private int _fractalImageHeight;
         private WriteableBitmap _writeableBitmap;
@@ -75,7 +85,7 @@ namespace FractalsWpf
                 _previousZoomLevel = 1;
                 IsMandelbrotSet = true;
                 IsGpuDataTypeDouble = true;
-                SelectedColourMap = MyColourMaps[0].Item2;
+                SelectedColourMap = AvailableColourMaps[0].Item2;
 
                 _initDone = true;
 
@@ -297,11 +307,13 @@ namespace FractalsWpf
 
         public bool IsMandelbrotSet
         {
-            get { return _isMandelbotSet; }
+            get { return _fractalType == FractalType.MandelbrotSet; }
             set
             {
-                _isMandelbotSet = value;
-                OnPropertyChanged();
+                _fractalType = FractalType.MandelbrotSet;
+                OnPropertyChanged("IsMandelbrotSet");
+                OnPropertyChanged("IsJuliaSet");
+                OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
                 Render();
             }
@@ -309,12 +321,31 @@ namespace FractalsWpf
 
         public bool IsJuliaSet
         {
-            get { return !_isMandelbotSet; }
+            get { return _fractalType == FractalType.JuliaSet; }
             set
             {
-                _isMandelbotSet = !value;
-                OnPropertyChanged();
+                _fractalType = FractalType.JuliaSet;
+                OnPropertyChanged("IsMandelbrotSet");
+                OnPropertyChanged("IsJuliaSet");
+                OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
+                Render();
+            }
+        }
+
+        public bool IsBarnsleyFern
+        {
+            get { return _fractalType == FractalType.BarnsleyFern; }
+            set
+            {
+                _fractalType = FractalType.BarnsleyFern;
+                OnPropertyChanged("IsMandelbrotSet");
+                OnPropertyChanged("IsJuliaSet");
+                OnPropertyChanged("IsBarnsleyFern");
+                UpdateSelectedFractal();
+                BottomLeft = new Point(-3d, -1d);
+                TopRight = new Point(3d, 11d);
+                MaxIterations = 120000;
                 Render();
             }
         }
@@ -354,15 +385,17 @@ namespace FractalsWpf
 
         private void UpdateSelectedFractal()
         {
-            var dict = new Dictionary<Tuple<bool, bool>, IFractal>
+            var dict = new Dictionary<Tuple<FractalType, bool>, IFractal>
             {
-                { Tuple.Create(true, true), _mandelbrotSetGpuDouble},
-                { Tuple.Create(true, false), _mandelbrotSetGpuFloat},
-                { Tuple.Create(false, true), _juliaSetGpuDouble},
-                { Tuple.Create(false, false), _juliaSetGpuFloat}
+                { Tuple.Create(FractalType.MandelbrotSet, true), _mandelbrotSetGpuDouble},
+                { Tuple.Create(FractalType.MandelbrotSet, false), _mandelbrotSetGpuFloat},
+                { Tuple.Create(FractalType.JuliaSet, true), _juliaSetGpuDouble},
+                { Tuple.Create(FractalType.JuliaSet, false), _juliaSetGpuFloat},
+                { Tuple.Create(FractalType.BarnsleyFern, true), _barnsleyFern},
+                { Tuple.Create(FractalType.BarnsleyFern, false), _barnsleyFern}
             };
 
-            _selectedFractal = dict[Tuple.Create(_isMandelbotSet, _isGpuDataTypeDouble)];
+            _selectedFractal = dict[Tuple.Create(_fractalType, _isGpuDataTypeDouble)];
         }
 
         private void SetStatusBarLeftText(TimeSpan elapsedTime1, TimeSpan elapsedTime2, TimeSpan elapsedTime3)

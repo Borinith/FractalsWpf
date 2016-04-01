@@ -34,20 +34,21 @@
                             <Label VerticalAlignment="Center">Zoom level:</Label>
                             <TextBlock VerticalAlignment="Center" Text="{Binding Path=ZoomLevel}" />
                         </StackPanel>
-                        <Slider x:Name="ZoomLevelSlider" Orientation="Vertical" TickPlacement="BottomRight" Minimum="1" Maximum="100" Value="{Binding Path=ZoomLevel}" Height="400" Margin="20" />
+                        <Slider x:Name="ZoomLevelSlider" Orientation="Vertical" TickFrequency="5" TickPlacement="Both" Minimum="1" Maximum="100" Value="{Binding Path=ZoomLevel}" Height="400" Margin="20" />
                     </StackPanel>
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
                             <Label VerticalAlignment="Center">Max iterations:</Label>
                             <TextBlock VerticalAlignment="Center" Text="{Binding Path=MaxIterations}"/>
                         </StackPanel>
-                        <Slider x:Name="MaxIterationsSlider" Orientation="Vertical" Minimum="10" Maximum="4096" Value="{Binding Path=MaxIterations}" Height="400" Margin="20" />
+                        <Slider x:Name="MaxIterationsSlider" Orientation="Vertical" TickFrequency="128" TickPlacement="Both" Minimum="10" Maximum="4096" Value="{Binding Path=MaxIterations}" Height="400" Margin="20" />
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <Label VerticalAlignment="Center">Fractal:</Label>
                     <RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsMandelbrotSet}" VerticalAlignment="Center" Margin="0,0,8,0">Mandelbrot Set</RadioButton>
                     <RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsJuliaSet}" VerticalAlignment="Center" Margin="0,0,8,0">Julia Set</RadioButton>
+                    <!--<RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsBarnsleyFern}" VerticalAlignment="Center" Margin="0,0,8,0">Barnsley Fern</RadioButton>-->
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <Label VerticalAlignment="Center">GPU data type:</Label>
@@ -55,9 +56,7 @@
                     <RadioButton GroupName="GpuDataType" IsChecked="{Binding Path=IsGpuDataTypeDouble}" VerticalAlignment="Center" Margin="0,0,8,0">Double</RadioButton>
                 </StackPanel>
                 <Grid HorizontalAlignment="Left" Margin="8">
-                    <ComboBox x:Name="ColourMapComboBox" Width="150" ItemsSource="{Binding Path=MyColourMaps}" DisplayMemberPath="Item1" SelectedValuePath="Item2" SelectedValue="{Binding Path=SelectedColourMap}">
-                        <!--<ComboBoxItem IsSelected="True">Jet</ComboBoxItem>
-                        <ComboBoxItem>Monochrome</ComboBoxItem>-->
+                    <ComboBox Width="150" ItemsSource="{Binding Path=AvailableColourMaps}" DisplayMemberPath="Item1" SelectedValuePath="Item2" SelectedValue="{Binding Path=SelectedColourMap}">
                     </ComboBox>
                 </Grid>
                 <Grid HorizontalAlignment="Left" Margin="8">
