@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics;
 
 namespace FractalsWpf
 {
@@ -13,20 +14,42 @@ namespace FractalsWpf
         public static int[] GetColourMap(string name)
         {
             const int n = 256;
+
             var colourMapData = ColourMapDataDictionary.ColourMapData(name);
+            if (colourMapData != null)
+            {
+                var rs = MakeMappingArray(n, colourMapData["red"]);
+                var gs = MakeMappingArray(n, colourMapData["green"]);
+                var bs = MakeMappingArray(n, colourMapData["blue"]);
 
-            var rs = MakeMappingArray(n, colourMapData["red"]);
-            var gs = MakeMappingArray(n, colourMapData["green"]);
-            var bs = MakeMappingArray(n, colourMapData["blue"]);
+                return Enumerable.Range(0, n)
+                    .Select(index =>
+                    {
+                        var r = (int)Math.Floor(rs[index] * (n - 1));
+                        var g = (int)Math.Floor(gs[index] * (n - 1));
+                        var b = (int)Math.Floor(bs[index] * (n - 1));
+                        return r << 16 | g << 8 | b;
+                    }).ToArray();
+            }
 
-            return Enumerable.Range(0, n)
-                .Select(index =>
-                {
-                    var r = (int)Math.Floor(rs[index] * (n - 1));
-                    var g = (int)Math.Floor(gs[index] * (n - 1));
-                    var b = (int)Math.Floor(bs[index] * (n - 1));
-                    return r << 16 | g << 8 | b;
-                }).ToArray();
+            var colourMapData2 = ColourMapDataDictionary.ColourMapData2(name);
+            if (colourMapData2 != null)
+            {
+                var rs = MakeMappingArray2(n, colourMapData2["red"]);
+                var gs = MakeMappingArray2(n, colourMapData2["green"]);
+                var bs = MakeMappingArray2(n, colourMapData2["blue"]);
+
+                return Enumerable.Range(0, n)
+                    .Select(index =>
+                    {
+                        var r = (int)Math.Floor(rs[index] * (n - 1));
+                        var g = (int)Math.Floor(gs[index] * (n - 1));
+                        var b = (int)Math.Floor(bs[index] * (n - 1));
+                        return r << 16 | g << 8 | b;
+                    }).ToArray();
+            }
+
+            throw new InvalidOperationException($"Failed to find a colour map called \"${name}\".");
         }
 
         private static double[] MakeMappingArray(int n, double[][] adata)
@@ -96,6 +119,26 @@ namespace FractalsWpf
                 if (!added) result[i] = arrLen;
             }
             return result;
+        }
+
+        private static double[] MakeMappingArray2(int n, Func<double, double> lambda)
+        {
+            return Generate.LinearSpaced(n, 0d, 1d)
+                .Select(lambda)
+                .Select(ClipZeroToOne)
+                .ToArray();
+        }
+
+        private static double ClipZeroToOne(double value)
+        {
+            return Clip(0d, 1d, value);
+        }
+
+        private static double Clip(double min, double max, double value)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
         }
     }
 }
