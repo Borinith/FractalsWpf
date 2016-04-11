@@ -15,21 +15,27 @@ namespace FractalsWpf
         {
             const int n = 256;
 
+            var values = GetColourMapRgbaValues(name, n);
+
+            return Enumerable.Range(0, n)
+                .Select(index =>
+                {
+                    var r = (int)Math.Floor(values[index][0] * (n - 1));
+                    var g = (int)Math.Floor(values[index][1] * (n - 1));
+                    var b = (int)Math.Floor(values[index][2] * (n - 1));
+                    return r << 16 | g << 8 | b;
+                }).ToArray();
+        }
+
+        public static double[][] GetColourMapRgbaValues(string name, int n)
+        {
             var colourMapData = ColourMapDataDictionary.ColourMapData(name);
             if (colourMapData != null)
             {
                 var rs = MakeMappingArray(n, colourMapData["red"]);
                 var gs = MakeMappingArray(n, colourMapData["green"]);
                 var bs = MakeMappingArray(n, colourMapData["blue"]);
-
-                return Enumerable.Range(0, n)
-                    .Select(index =>
-                    {
-                        var r = (int)Math.Floor(rs[index] * (n - 1));
-                        var g = (int)Math.Floor(gs[index] * (n - 1));
-                        var b = (int)Math.Floor(bs[index] * (n - 1));
-                        return r << 16 | g << 8 | b;
-                    }).ToArray();
+                return RsGsBsToColourValues(n, rs, gs, bs);
             }
 
             var colourMapData2 = ColourMapDataDictionary.ColourMapData2(name);
@@ -38,18 +44,26 @@ namespace FractalsWpf
                 var rs = MakeMappingArray2(n, colourMapData2["red"]);
                 var gs = MakeMappingArray2(n, colourMapData2["green"]);
                 var bs = MakeMappingArray2(n, colourMapData2["blue"]);
-
-                return Enumerable.Range(0, n)
-                    .Select(index =>
-                    {
-                        var r = (int)Math.Floor(rs[index] * (n - 1));
-                        var g = (int)Math.Floor(gs[index] * (n - 1));
-                        var b = (int)Math.Floor(bs[index] * (n - 1));
-                        return r << 16 | g << 8 | b;
-                    }).ToArray();
+                return RsGsBsToColourValues(n, rs, gs, bs);
             }
 
             throw new InvalidOperationException($"Failed to find a colour map called \"${name}\".");
+        }
+
+        private static double[][] RsGsBsToColourValues(
+            int n,
+            IReadOnlyList<double> rs,
+            IReadOnlyList<double> gs,
+            IReadOnlyList<double> bs)
+        {
+            var values = new List<double[]>();
+
+            for (var i = 0; i < n; i++)
+            {
+                values.Add(new[] {rs[i], gs[i], bs[i], 1d});
+            }
+
+            return values.ToArray();
         }
 
         private static double[] MakeMappingArray(int n, double[][] adata)
@@ -96,7 +110,7 @@ namespace FractalsWpf
 
             // # ensure that the lut is confined to values between 0 and 1 by clipping it
             // return np.clip(lut, 0.0, 1.0)
-            return lut;
+            return lut.Select(ClipZeroToOne).ToArray();
         }
 
         private static int[] SearchSorted(IReadOnlyList<double> arr, IReadOnlyList<double> vs)
