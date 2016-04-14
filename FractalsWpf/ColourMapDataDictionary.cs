@@ -165,12 +165,30 @@ namespace FractalsWpf
                 {"blue", GnuplotPaletteFunctions[15]}
             };
 
+        private static readonly Dictionary<string, Func<double, double>> AfmHotData =
+            new Dictionary<string, Func<double, double>>
+            {
+                {"red", GnuplotPaletteFunctions[34]},
+                {"green", GnuplotPaletteFunctions[35]},
+                {"blue", GnuplotPaletteFunctions[36]}
+            };
+
+        private static readonly Dictionary<string, Func<double, double>> GistHeatData =
+            new Dictionary<string, Func<double, double>>
+            {
+                {"red", x => 1.5 * x},
+                {"green", x => 2 * x - 1},
+                {"blue", x => 4 * x - 3}
+            };
+
         private static readonly Dictionary<string, Dictionary<string, Func<double, double>>> DataDictionary2 =
             new Dictionary<string, Dictionary<string, Func<double, double>>>(StringComparer.InvariantCultureIgnoreCase)
             {
                 {"ocean", OceanData},
                 {"rainbow", RainbowData},
-                {"gnuplot", GnuPlotData}
+                {"gnuplot", GnuPlotData},
+                {"afmhot", AfmHotData},
+                {"gist_heat", GistHeatData}
             };
     }
 }

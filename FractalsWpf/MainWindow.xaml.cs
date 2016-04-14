@@ -28,6 +28,8 @@ namespace FractalsWpf
         private static readonly int[] OceanColourMap = ColourMaps.GetColourMap("ocean");
         private static readonly int[] RainbowColourMap = ColourMaps.GetColourMap("rainbow");
         private static readonly int[] GnuPlotColourMap = ColourMaps.GetColourMap("gnuplot");
+        private static readonly int[] AfmHotColourMap = ColourMaps.GetColourMap("afmhot");
+        private static readonly int[] GistHeatColourMap = ColourMaps.GetColourMap("gist_heat");
         private static readonly int[] ForestGreenColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] {Colors.ForestGreen.ToInt()}).ToArray();
         private static readonly int[] MonochromeColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] {Colors.Black.ToInt()}).ToArray();
         public static List<Tuple<string, int[]>> AvailableColourMaps => new List<Tuple<string, int[]>>
@@ -37,6 +39,8 @@ namespace FractalsWpf
             Tuple.Create("Ocean", OceanColourMap),
             Tuple.Create("Rainbow", RainbowColourMap),
             Tuple.Create("GnuPlot", GnuPlotColourMap),
+            Tuple.Create("AfmHot", AfmHotColourMap),
+            Tuple.Create("GistHeat", GistHeatColourMap),
             Tuple.Create("ForestGreen", ForestGreenColourMap),
             Tuple.Create("Monochrome", MonochromeColourMap)
         };
