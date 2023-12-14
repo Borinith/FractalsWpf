@@ -30,15 +30,15 @@
             </Grid.ColumnDefinitions>
             
             <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom">Bottom left:</Label>
-            <TextBox md:TextFieldAssist.Hint="X" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+            <TextBox md:HintAssist.Hint="X" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
                  Margin="0,0,8,0" FontSize="16" Grid.Row="0" Grid.Column="1" Text="{Binding Path=BottomLeftX}" />
-            <TextBox md:TextFieldAssist.Hint="Y" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+            <TextBox md:HintAssist.Hint="Y" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
                  Margin="0,0,8,0" FontSize="16" Grid.Row="0" Grid.Column="2" Text="{Binding Path=BottomLeftY}" />
 
             <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">Top right:</Label>
-            <TextBox md:TextFieldAssist.Hint="X" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+            <TextBox md:HintAssist.Hint="X" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
                  Margin="0,0,8,0" FontSize="16" Grid.Row="1" Grid.Column="1" Text="{Binding Path=TopRightX}" />
-            <TextBox md:TextFieldAssist.Hint="Y" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+            <TextBox md:HintAssist.Hint="Y" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
                  Margin="0,0,8,0" FontSize="16" Grid.Row="1" Grid.Column="2" Text="{Binding Path=TopRightY}" />
         </Grid>
         

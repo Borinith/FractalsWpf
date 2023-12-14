@@ -56,7 +56,7 @@ namespace FractalsWpf
             }
         }
 
-        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
+        [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
         private static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
 
         public void ReadMappedBuffer<T>(OpenCLBuffer sourceBuffer, T[] destinationArray)
