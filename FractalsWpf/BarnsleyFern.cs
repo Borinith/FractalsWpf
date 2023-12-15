@@ -16,8 +16,8 @@ namespace FractalsWpf
             int numPointsHigh,
             int maxIterations)
         {
-            var scaleX = numPointsWide/(topRight.Real - bottomLeft.Real);
-            var scaleY = numPointsHigh/(topRight.Imaginary - bottomLeft.Imaginary);
+            var scaleX = numPointsWide / (topRight.Real - bottomLeft.Real);
+            var scaleY = numPointsHigh / (topRight.Imaginary - bottomLeft.Imaginary);
             var translateX = bottomLeft.Real;
             var translateY = bottomLeft.Imaginary;
             var numResults = numPointsWide * numPointsHigh;
@@ -39,15 +39,15 @@ namespace FractalsWpf
         {
         }
 
-        // ReSharper disable once FunctionNeverReturns
         private static IEnumerable<Point> Points()
         {
-            var random = new Random((int)DateTime.UtcNow.Ticks);
-
             var pt = new Point();
+
             yield return pt;
 
-            for (;;)
+            var random = new Random((int)DateTime.UtcNow.Ticks);
+
+            while (true)
             {
                 var xn = pt.X;
                 var yn = pt.Y;
@@ -57,25 +57,25 @@ namespace FractalsWpf
                 {
                     // xn + 1 = 0
                     // yn + 1 = 0.16 yn
-                    pt = new Point(0, 0.16*yn);
+                    pt = new Point(0, 0.16 * yn);
                 }
                 else if (r <= 1 + 85)
                 {
                     // xn + 1 = 0.85 xn + 0.04 yn
                     // yn + 1 = −0.04 xn + 0.85 yn + 1.6
-                    pt = new Point(0.85*xn + 0.04*yn, -0.04*xn + 0.85*yn + 1.6);
+                    pt = new Point(0.85 * xn + 0.04 * yn, -0.04 * xn + 0.85 * yn + 1.6);
                 }
                 else if (r <= 1 + 85 + 7)
                 {
                     // xn + 1 = 0.2 xn − 0.26 yn
                     // yn + 1 = 0.23 xn + 0.22 yn + 1.6
-                    pt = new Point(0.2*xn - 0.26*yn, 0.23*xn + 0.22*yn + 1.6);
+                    pt = new Point(0.2 * xn - 0.26 * yn, 0.23 * xn + 0.22 * yn + 1.6);
                 }
                 else
                 {
                     // xn + 1 = −0.15 xn + 0.28 yn
                     // yn + 1 = 0.26 xn + 0.24 yn + 0.44
-                    pt = new Point(-0.15*xn + 0.28*yn, 0.26*xn + 0.24*yn + 0.44);
+                    pt = new Point(-0.15 * xn + 0.28 * yn, 0.26 * xn + 0.24 * yn + 0.44);
                 }
 
                 yield return pt;

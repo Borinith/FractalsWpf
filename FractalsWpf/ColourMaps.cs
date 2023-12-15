@@ -1,7 +1,7 @@
-﻿using System;
+﻿using MathNet.Numerics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using MathNet.Numerics;
 
 namespace FractalsWpf
 {
@@ -23,27 +23,32 @@ namespace FractalsWpf
                     var r = (int)Math.Floor(values[index][0] * (n - 1));
                     var g = (int)Math.Floor(values[index][1] * (n - 1));
                     var b = (int)Math.Floor(values[index][2] * (n - 1));
-                    return r << 16 | g << 8 | b;
+
+                    return (r << 16) | (g << 8) | b;
                 }).ToArray();
         }
 
         public static double[][] GetColourMapRgbaValues(string name, int n)
         {
             var colourMapData = ColourMapDataDictionary.ColourMapData(name);
+
             if (colourMapData != null)
             {
                 var rs = MakeMappingArray(n, colourMapData["red"]);
                 var gs = MakeMappingArray(n, colourMapData["green"]);
                 var bs = MakeMappingArray(n, colourMapData["blue"]);
+
                 return RsGsBsToColourValues(n, rs, gs, bs);
             }
 
             var colourMapData2 = ColourMapDataDictionary.ColourMapData2(name);
+
             if (colourMapData2 != null)
             {
                 var rs = MakeMappingArray2(n, colourMapData2["red"]);
                 var gs = MakeMappingArray2(n, colourMapData2["green"]);
                 var bs = MakeMappingArray2(n, colourMapData2["blue"]);
+
                 return RsGsBsToColourValues(n, rs, gs, bs);
             }
 
@@ -60,7 +65,7 @@ namespace FractalsWpf
 
             for (var i = 0; i < n; i++)
             {
-                values.Add(new[] {rs[i], gs[i], bs[i], 1d});
+                values.Add(new[] { rs[i], gs[i], bs[i], 1d });
             }
 
             return values.ToArray();
@@ -93,6 +98,7 @@ namespace FractalsWpf
                 {
                     var numerator = xind[i + 1] - x[ind[i] - 1];
                     var denominator = x[ind[i]] - x[ind[i] - 1];
+
                     return numerator / denominator;
                 }).ToArray();
 
@@ -117,21 +123,29 @@ namespace FractalsWpf
         {
             var result = new int[vs.Count];
             var arrLen = arr.Count;
+
             for (var i = 0; i < vs.Count; i++)
             {
                 var v = vs[i];
                 var added = false;
+
                 for (var j = 0; j < arrLen; j++)
                 {
                     if (v <= arr[j])
                     {
                         result[i] = j;
                         added = true;
+
                         break;
                     }
                 }
-                if (!added) result[i] = arrLen;
+
+                if (!added)
+                {
+                    result[i] = arrLen;
+                }
             }
+
             return result;
         }
 
@@ -150,8 +164,16 @@ namespace FractalsWpf
 
         private static double Clip(double min, double max, double value)
         {
-            if (value < min) return min;
-            if (value > max) return max;
+            if (value < min)
+            {
+                return min;
+            }
+
+            if (value > max)
+            {
+                return max;
+            }
+
             return value;
         }
     }

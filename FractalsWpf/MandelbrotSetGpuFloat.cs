@@ -1,9 +1,9 @@
-﻿using System.Numerics;
-using OpenCL;
+﻿using OpenCL;
+using System.Numerics;
 
 namespace FractalsWpf
 {
-    class MandelbrotSetGpuFloat : IFractal
+    internal class MandelbrotSetGpuFloat : IFractal
     {
         private readonly OpenCLRunner _runner;
         private OpenCLBuffer _resultsBuffer;
@@ -21,8 +21,8 @@ namespace FractalsWpf
             int numPointsHigh,
             int maxIterations)
         {
-            var deltaReal = (topRight.Real - bottomLeft.Real)/(numPointsWide - 1);
-            var deltaImaginary = (topRight.Imaginary - bottomLeft.Imaginary)/(numPointsHigh - 1);
+            var deltaReal = (topRight.Real - bottomLeft.Real) / (numPointsWide - 1);
+            var deltaImaginary = (topRight.Imaginary - bottomLeft.Imaginary) / (numPointsHigh - 1);
             var numResults = numPointsWide * numPointsHigh;
             var results = new ushort[numResults];
 
@@ -47,7 +47,11 @@ namespace FractalsWpf
 
         private void ReallocateResultsBufferIfNecessary(int numResults)
         {
-            if ((_resultsBuffer?.Length ?? 0) == numResults) return;
+            if ((_resultsBuffer?.Length ?? 0) == numResults)
+            {
+                return;
+            }
+
             _resultsBuffer?.Dispose();
             _resultsBuffer = _runner.CreateWriteOnlyBuffer<ushort>(numResults);
         }

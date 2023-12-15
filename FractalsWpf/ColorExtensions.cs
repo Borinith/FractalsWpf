@@ -12,7 +12,7 @@ namespace FractalsWpf
 
         private static byte[] ToByteArray(this Color c)
         {
-            return new[] {c.B, c.G, c.R, (byte) 0};
+            return new[] { c.B, c.G, c.R, (byte)0 };
         }
     }
 }

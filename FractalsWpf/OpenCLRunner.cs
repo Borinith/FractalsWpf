@@ -1,10 +1,10 @@
-﻿using System;
+﻿using OpenCL;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using OpenCL;
 
 namespace FractalsWpf
 {
@@ -14,11 +14,13 @@ namespace FractalsWpf
         public OpenCLRunner(string functionName)
         {
             var platform = OpenCLPlatform.Platforms.FirstOrDefault(p => p.Vendor.Contains("NVIDIA"));
+
             Context = new OpenCLContext(
                 OpenCLDeviceType.Gpu,
                 new OpenCLContextPropertyList(platform),
                 null,
                 IntPtr.Zero);
+
             var device = Context.Devices.First();
             CommandQueue = new OpenCLCommandQueue(Context, device, OpenCLCommandQueueProperties.None);
             var resourceName = $"FractalsWpf.OpenCL.{functionName}.cl";
@@ -26,8 +28,10 @@ namespace FractalsWpf
             Kernel = program.CreateKernel(functionName);
         }
 
-        public OpenCLContext Context { get; }
-        public OpenCLCommandQueue CommandQueue { get; }
+        private OpenCLContext Context { get; }
+
+        private OpenCLCommandQueue CommandQueue { get; }
+
         public OpenCLKernel Kernel { get; }
 
         public void Dispose()
@@ -40,7 +44,8 @@ namespace FractalsWpf
         public OpenCLBuffer CreateWriteOnlyBuffer<T>(long count)
         {
             const OpenCLMemoryFlags flags = OpenCLMemoryFlags.WriteOnly | OpenCLMemoryFlags.AllocateHostPointer;
-            return new OpenCLBuffer(Context, flags, typeof(T), new [] {count});
+
+            return new OpenCLBuffer(Context, flags, typeof(T), new[] { count });
         }
 
         public void ReadBuffer<T>(OpenCLBuffer sourceBuffer, T[] destinationArray)
@@ -82,14 +87,23 @@ namespace FractalsWpf
 
         private void UnmapBuffer(OpenCLBuffer buffer, ref IntPtr mappedPtr)
         {
-            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
-            if (mappedPtr == IntPtr.Zero) return;
+            if (buffer == null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+
+            if (mappedPtr == IntPtr.Zero)
+            {
+                return;
+            }
+
             CommandQueue.Unmap(buffer, ref mappedPtr);
         }
 
         public void RunKernelGlobal2D(int globalWorkSize0, int globalWorkSize1)
         {
-            var globalWorkSize = new long[] {globalWorkSize0, globalWorkSize1};
+            var globalWorkSize = new long[] { globalWorkSize0, globalWorkSize1 };
+
             CommandQueue.Execute(
                 Kernel,
                 null, // globalWorkOffset
@@ -117,12 +131,15 @@ namespace FractalsWpf
                     "-cl-strict-aliasing",
                     "-Werror"
                 };
+
                 var options = string.Join(" ", optionsList);
-                program.Build(new List<OpenCLDevice> {CommandQueue.Device}, options, null, IntPtr.Zero);
+
+                program.Build(new List<OpenCLDevice> { CommandQueue.Device }, options, null, IntPtr.Zero);
             }
             catch (BuildProgramFailureOpenCLException)
             {
                 var buildLog = program.GetBuildLog(CommandQueue.Device);
+
                 throw new ApplicationException($"Error building program \"{resourceName}\":{Environment.NewLine}{buildLog}");
             }
 
@@ -133,9 +150,15 @@ namespace FractalsWpf
         {
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             {
-                if (stream == null) throw new ApplicationException($"Failed to load resource {resourceName}");
-                var streamReader = new StreamReader(stream);
-                return streamReader.ReadToEnd();
+                if (stream == null)
+                {
+                    throw new ApplicationException($"Failed to load resource {resourceName}");
+                }
+
+                using (var streamReader = new StreamReader(stream))
+                {
+                    return streamReader.ReadToEnd();
+                }
             }
         }
     }

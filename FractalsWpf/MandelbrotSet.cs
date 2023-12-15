@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using MathNet.Numerics;
+using System.Linq;
 using System.Numerics;
-using MathNet.Numerics;
 
 namespace FractalsWpf
 {
@@ -37,7 +37,11 @@ namespace FractalsWpf
             foreach (var iterations in Enumerable.Range(0, maxIterations))
             {
                 z = z * z + c;
-                if (z.Real * z.Real + z.Imaginary * z.Imaginary >= 4d) return (ushort)iterations;
+
+                if (z.Real * z.Real + z.Imaginary * z.Imaginary >= 4d)
+                {
+                    return (ushort)iterations;
+                }
             }
 
             return (ushort)maxIterations;

@@ -1,47 +1,46 @@
 ﻿<UserControl x:Class="FractalsWpf.SetRegionDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        Height="250"
-        Width="400"
-    >
-    
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             Height="250"
+             Width="400">
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
+
         <TextBlock Grid.Row="0" TextWrapping="Wrap" Margin="8">
             Enter values for the bottom-left and top-right corners of the region you wish to view.
         </TextBlock>
-        
+
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom">Bottom left:</Label>
             <TextBox md:HintAssist.Hint="X" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-                 Margin="0,0,8,0" FontSize="16" Grid.Row="0" Grid.Column="1" Text="{Binding Path=BottomLeftX}" />
+                     Margin="0,0,8,0" FontSize="16" Grid.Row="0" Grid.Column="1" Text="{Binding Path=BottomLeftX}" />
             <TextBox md:HintAssist.Hint="Y" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-                 Margin="0,0,8,0" FontSize="16" Grid.Row="0" Grid.Column="2" Text="{Binding Path=BottomLeftY}" />
+                     Margin="0,0,8,0" FontSize="16" Grid.Row="0" Grid.Column="2" Text="{Binding Path=BottomLeftY}" />
 
             <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">Top right:</Label>
             <TextBox md:HintAssist.Hint="X" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-                 Margin="0,0,8,0" FontSize="16" Grid.Row="1" Grid.Column="1" Text="{Binding Path=TopRightX}" />
+                     Margin="0,0,8,0" FontSize="16" Grid.Row="1" Grid.Column="1" Text="{Binding Path=TopRightX}" />
             <TextBox md:HintAssist.Hint="Y" Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-                 Margin="0,0,8,0" FontSize="16" Grid.Row="1" Grid.Column="2" Text="{Binding Path=TopRightY}" />
+                     Margin="0,0,8,0" FontSize="16" Grid.Row="1" Grid.Column="2" Text="{Binding Path=TopRightY}" />
         </Grid>
-        
+
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Button IsCancel="True" Margin="0,8,8,8" Command="{x:Static md:DialogHost.CloseDialogCommand}">
                 <Button.CommandParameter>
@@ -53,8 +52,9 @@
                 <Button.CommandParameter>
                     <system:Boolean>true</system:Boolean>
                 </Button.CommandParameter>
-                OK</Button>
+                OK
+            </Button>
         </StackPanel>
     </Grid>
-    
+
 </UserControl>
