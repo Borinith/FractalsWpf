@@ -75,7 +75,7 @@ namespace FractalsWpf
                 { "jet", JetData },
                 { "gist_stern", GistSternData }
             };
-
+        
         // ReSharper disable ConvertClosureToMethodGroup
         private static readonly Dictionary<int, Func<double, double>> GnuplotPaletteFunctions = new()
         {

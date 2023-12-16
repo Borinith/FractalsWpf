@@ -103,10 +103,12 @@ namespace FractalsWpf
                 }).ToArray();
 
             // lut[1:-1] = distance * (y0[ind] - y1[ind - 1]) + y1[ind - 1]
-            Enumerable.Range(0, n - 2).ToList().ForEach(i =>
-            {
-                lut[i + 1] = distance[i] * (y0[ind[i]] - y1[ind[i] - 1]) + y1[ind[i] - 1];
-            });
+            Enumerable.Range(0, n - 2)
+                .ToList()
+                .ForEach(i =>
+                {
+                    lut[i + 1] = distance[i] * (y0[ind[i]] - y1[ind[i] - 1]) + y1[ind[i] - 1];
+                });
 
             // lut[0] = y1[0]
             lut[0] = y1[0];

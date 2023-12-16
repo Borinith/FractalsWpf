@@ -47,19 +47,22 @@
                                 Height="400" Margin="20" />
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                <StackPanel Orientation="Vertical" Margin="0,8,0,0">
                     <Label VerticalAlignment="Center">Fractal:</Label>
                     <RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsMandelbrotSet}"
-                                 VerticalAlignment="Center" Margin="0,0,8,0">
+                                 VerticalAlignment="Center" Margin="0,8,0,0">
                         Mandelbrot Set
                     </RadioButton>
                     <RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsJuliaSet}" VerticalAlignment="Center"
-                                 Margin="0,0,8,0">
+                                 Margin="0,8,0,0">
                         Julia Set
                     </RadioButton>
-                    <!--<RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsBarnsleyFern}" VerticalAlignment="Center" Margin="0,0,8,0">Barnsley Fern</RadioButton>-->
+                    <RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsBarnsleyFern}"
+                                 VerticalAlignment="Center" Margin="0,8,0,0">
+                        Barnsley Fern
+                    </RadioButton>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                <!--<StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <Label VerticalAlignment="Center">GPU data type:</Label>
                     <RadioButton GroupName="GpuDataType" IsChecked="{Binding Path=IsGpuDataTypeFloat}"
                                  VerticalAlignment="Center" Margin="0,0,8,0">
@@ -69,7 +72,7 @@
                                  VerticalAlignment="Center" Margin="0,0,8,0">
                         Double
                     </RadioButton>
-                </StackPanel>
+                </StackPanel>-->
                 <Grid HorizontalAlignment="Left" Margin="8">
                     <ComboBox Width="150" ItemsSource="{Binding Path=AvailableColourMaps}" DisplayMemberPath="Item1"
                               SelectedValuePath="Item2" SelectedValue="{Binding Path=SelectedColourMap}" />

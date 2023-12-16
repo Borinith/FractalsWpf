@@ -14,13 +14,6 @@ using System.Windows.Media.Imaging;
 
 namespace FractalsWpf
 {
-    public enum FractalType
-    {
-        MandelbrotSet = 0,
-        JuliaSet = 1,
-        BarnsleyFern = 2
-    }
-
     public sealed partial class MainWindow : INotifyPropertyChanged
     {
         private static readonly int[] JetColourMap = ColourMaps.GetColourMap("jet");
@@ -315,6 +308,13 @@ namespace FractalsWpf
                 OnPropertyChanged("IsJuliaSet");
                 OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
+
+                BottomLeft = new Point(-2.25d, -1.5d);
+                TopRight = new Point(0.75d, 1.5d);
+                AdjustAspectRatio();
+
+                MaxIterations = 120;
+                SelectedColourMap = AvailableColourMaps[0].Item2;
                 Render();
             }
         }
@@ -329,6 +329,13 @@ namespace FractalsWpf
                 OnPropertyChanged("IsJuliaSet");
                 OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
+
+                BottomLeft = new Point(-2.25d, -1.5d);
+                TopRight = new Point(0.75d, 1.5d);
+                AdjustAspectRatio();
+
+                MaxIterations = 4096;
+                SelectedColourMap = AvailableColourMaps[0].Item2;
                 Render();
             }
         }
@@ -345,7 +352,8 @@ namespace FractalsWpf
                 UpdateSelectedFractal();
                 BottomLeft = new Point(-3d, -1d);
                 TopRight = new Point(3d, 11d);
-                MaxIterations = 120000;
+                MaxIterations = 4096;
+                SelectedColourMap = AvailableColourMaps[4].Item2;
                 Render();
             }
         }
@@ -543,7 +551,7 @@ namespace FractalsWpf
             return stopwatch.Elapsed;
         }
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
