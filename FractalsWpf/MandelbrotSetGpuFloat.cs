@@ -6,7 +6,7 @@ namespace FractalsWpf
     internal class MandelbrotSetGpuFloat : IFractal
     {
         private readonly OpenCLRunner _runner;
-        private OpenCLBuffer _resultsBuffer;
+        private OpenCLBuffer? _resultsBuffer;
 
         public MandelbrotSetGpuFloat()
         {
@@ -33,7 +33,7 @@ namespace FractalsWpf
             _runner.Kernel.SetValueArgument(2, maxIterations);
             _runner.Kernel.SetMemoryArgument(3, _resultsBuffer);
             _runner.RunKernelGlobal2D(numPointsWide, numPointsHigh);
-            _runner.ReadBuffer(_resultsBuffer, results);
+            _runner.ReadBuffer(_resultsBuffer!, results);
             _runner.Finish();
 
             return results;
@@ -42,7 +42,7 @@ namespace FractalsWpf
         public void Dispose()
         {
             _resultsBuffer?.Dispose();
-            _runner?.Dispose();
+            _runner.Dispose();
         }
 
         private void ReallocateResultsBufferIfNecessary(int numResults)

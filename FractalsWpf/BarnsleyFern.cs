@@ -29,7 +29,13 @@ namespace FractalsWpf
                 var transformedY = (pt.Y - translateY) * scaleY;
                 var x = (int)Math.Truncate(transformedX);
                 var y = (int)Math.Truncate(transformedY);
-                results[(numPointsHigh - y) * numPointsWide + x] = 1;
+
+                var pointCoordinate = (numPointsHigh - y) * numPointsWide + x;
+
+                if (pointCoordinate >= 0 && pointCoordinate < numResults)
+                {
+                    results[pointCoordinate] = 1;
+                }
             }
 
             return results;

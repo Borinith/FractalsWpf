@@ -6,7 +6,7 @@ namespace FractalsWpf
     internal class MandelbrotSetGpuDouble : IFractal
     {
         private readonly OpenCLRunner _runner;
-        private OpenCLBuffer _resultsBuffer;
+        private OpenCLBuffer? _resultsBuffer;
 
         public MandelbrotSetGpuDouble()
         {
@@ -38,7 +38,7 @@ namespace FractalsWpf
             //_runner.ReadBuffer(_resultsBuffer, results);
 
             _runner.Finish();
-            _runner.ReadMappedBuffer(_resultsBuffer, results);
+            _runner.ReadMappedBuffer(_resultsBuffer!, results);
 
             return results;
         }
@@ -46,7 +46,7 @@ namespace FractalsWpf
         public void Dispose()
         {
             _resultsBuffer?.Dispose();
-            _runner?.Dispose();
+            _runner.Dispose();
         }
 
         private void ReallocateResultsBufferIfNecessary(int numResults)

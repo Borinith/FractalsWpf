@@ -1,5 +1,6 @@
 ﻿using MaterialDesignThemes.Wpf;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -28,11 +29,12 @@ namespace FractalsWpf
         private static readonly int[] MonochromeColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] { Colors.Black.ToInt() }).ToArray();
 
         private readonly IFractal _barnsleyFern = new BarnsleyFern();
+        private readonly FrozenDictionary<Tuple<FractalType, bool>, IFractal> _dict;
         private readonly IFractal _juliaSetGpuDouble = new JuliaSetGpuDouble();
         private readonly IFractal _juliaSetGpuFloat = new JuliaSetGpuFloat();
         private readonly IFractal _mandelbrotSetGpuDouble = new MandelbrotSetGpuDouble();
-
         private readonly IFractal _mandelbrotSetGpuFloat = new MandelbrotSetGpuFloat();
+
         private Point _bottomLeft;
         private int _fractalImageHeight;
         private int _fractalImageWidth;
@@ -50,11 +52,37 @@ namespace FractalsWpf
 
         public MainWindow()
         {
+            _dict = new Dictionary<Tuple<FractalType, bool>, IFractal>
+            {
+                {
+                    Tuple.Create(FractalType.MandelbrotSet, true), _mandelbrotSetGpuDouble
+                },
+                {
+                    Tuple.Create(FractalType.MandelbrotSet, false), _mandelbrotSetGpuFloat
+                },
+                {
+                    Tuple.Create(FractalType.JuliaSet, true), _juliaSetGpuDouble
+                },
+                {
+                    Tuple.Create(FractalType.JuliaSet, false), _juliaSetGpuFloat
+                },
+                {
+                    Tuple.Create(FractalType.BarnsleyFern, true), _barnsleyFern
+                },
+                {
+                    Tuple.Create(FractalType.BarnsleyFern, false), _barnsleyFern
+                }
+            }.ToFrozenDictionary();
+
             InitializeComponent();
             DataContext = this;
 
             ContentRendered += (_, __) =>
             {
+                MaxIterations = 120;
+                ZoomLevel = 1;
+                _previousZoomLevel = 1;
+
                 //BottomLeft = new Point(-2d, -2d);
                 //TopRight = new Point(2d, 2d);
 
@@ -75,9 +103,6 @@ namespace FractalsWpf
 
                 AdjustAspectRatio();
 
-                MaxIterations = 120;
-                ZoomLevel = 1;
-                _previousZoomLevel = 1;
                 IsMandelbrotSet = true;
                 IsGpuDataTypeDouble = true;
                 SelectedColourMap = AvailableColourMaps[0].Item2;
@@ -87,44 +112,9 @@ namespace FractalsWpf
                 Render();
             };
 
-            ZoomLevelSlider.ValueChanged += (_, args) =>
+            ZoomLevelSlider.ValueChanged += (_, __) =>
             {
-                if (!_initDone)
-                {
-                    return;
-                }
-
-                if (ZoomLevel == _previousZoomLevel)
-                {
-                    return;
-                }
-
-                var diff = ZoomLevel - _previousZoomLevel;
-
-                foreach (var idx in Enumerable.Range(0, Math.Abs(diff)))
-                {
-                    var w = TopRight.X - BottomLeft.X;
-                    var h = TopRight.Y - BottomLeft.Y;
-
-                    if (diff > 0)
-                    {
-                        var dw = w / 4;
-                        var dh = h / 4;
-                        BottomLeft = new Point(BottomLeft.X + dw, BottomLeft.Y + dh);
-                        TopRight = new Point(TopRight.X - dw, TopRight.Y - dh);
-                    }
-                    else
-                    {
-                        var dw = w / 2;
-                        var dh = h / 2;
-                        BottomLeft = new Point(BottomLeft.X - dw, BottomLeft.Y - dh);
-                        TopRight = new Point(TopRight.X + dw, TopRight.Y + dh);
-                    }
-                }
-
-                Render();
-
-                _previousZoomLevel = ZoomLevel;
+                ZoomLevelChanged();
             };
 
             MaxIterationsSlider.ValueChanged += (_, __) =>
@@ -153,7 +143,7 @@ namespace FractalsWpf
             var lastMousePt = new Point();
             var panningInProgress = false;
 
-            MouseDown += (_, args) =>
+            MouseDown += (_, __) =>
             {
                 if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
                 {
@@ -186,7 +176,8 @@ namespace FractalsWpf
 
                 var currentMousePt = Mouse.GetPosition(FractalImage);
                 var mouseDx = currentMousePt.X - lastMousePt.X;
-                var mouseDy = currentMousePt.Y - lastMousePt.Y;
+                var mouseDyTemp = currentMousePt.Y - lastMousePt.Y;
+                var mouseDy = IsBarnsleyFern ? -mouseDyTemp : mouseDyTemp;
                 var regionWidth = TopRight.X - BottomLeft.X;
                 var regionHeight = TopRight.Y - BottomLeft.Y;
                 var regionDx = mouseDx / _fractalImageWidth * regionWidth;
@@ -195,6 +186,18 @@ namespace FractalsWpf
                 TopRight = new Point(TopRight.X - regionDx, TopRight.Y - regionDy);
                 Render();
                 lastMousePt = currentMousePt;
+            };
+
+            MouseWheel += (_, args) =>
+            {
+                var step = args.Delta > 0
+                    ? 1
+                    : args.Delta < 0
+                        ? -1
+                        : 0;
+
+                ZoomLevel += step;
+                ZoomLevelChanged();
             };
 
             MouseUp += (_, __) =>
@@ -229,7 +232,7 @@ namespace FractalsWpf
             SetRegionBtn.Click += async (_, __) =>
             {
                 var setRegionDialog = new SetRegionDialog();
-                var result = (bool)await DialogHost.Show(setRegionDialog, "RootDialog", SetRegionDialogClosing);
+                var result = Convert.ToBoolean(await DialogHost.Show(setRegionDialog, "RootDialog", SetRegionDialogClosing));
 
                 if (!result)
                 {
@@ -293,8 +296,11 @@ namespace FractalsWpf
             get => _zoomLevel;
             set
             {
-                _zoomLevel = value;
-                OnPropertyChanged();
+                if (value > 0)
+                {
+                    _zoomLevel = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -309,11 +315,14 @@ namespace FractalsWpf
                 OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
 
+                MaxIterations = 120;
+                ZoomLevel = 1;
+
                 BottomLeft = new Point(-2.25d, -1.5d);
                 TopRight = new Point(0.75d, 1.5d);
+
                 AdjustAspectRatio();
 
-                MaxIterations = 120;
                 SelectedColourMap = AvailableColourMaps[0].Item2;
                 Render();
             }
@@ -330,11 +339,14 @@ namespace FractalsWpf
                 OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
 
+                MaxIterations = 4096;
+                ZoomLevel = 1;
+
                 BottomLeft = new Point(-2.25d, -1.5d);
                 TopRight = new Point(0.75d, 1.5d);
+
                 AdjustAspectRatio();
 
-                MaxIterations = 4096;
                 SelectedColourMap = AvailableColourMaps[0].Item2;
                 Render();
             }
@@ -350,9 +362,15 @@ namespace FractalsWpf
                 OnPropertyChanged("IsJuliaSet");
                 OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
+
+                MaxIterations = 1_000_000;
+                ZoomLevel = 1;
+
                 BottomLeft = new Point(-3d, -1d);
                 TopRight = new Point(3d, 11d);
-                MaxIterations = 4096;
+
+                AdjustAspectRatio();
+
                 SelectedColourMap = AvailableColourMaps[4].Item2;
                 Render();
             }
@@ -393,7 +411,7 @@ namespace FractalsWpf
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private static void SetRegionDialogClosing(object _, DialogClosingEventArgs __)
         {
@@ -431,29 +449,7 @@ namespace FractalsWpf
 
         private void UpdateSelectedFractal()
         {
-            var dict = new Dictionary<Tuple<FractalType, bool>, IFractal>
-            {
-                {
-                    Tuple.Create(FractalType.MandelbrotSet, true), _mandelbrotSetGpuDouble
-                },
-                {
-                    Tuple.Create(FractalType.MandelbrotSet, false), _mandelbrotSetGpuFloat
-                },
-                {
-                    Tuple.Create(FractalType.JuliaSet, true), _juliaSetGpuDouble
-                },
-                {
-                    Tuple.Create(FractalType.JuliaSet, false), _juliaSetGpuFloat
-                },
-                {
-                    Tuple.Create(FractalType.BarnsleyFern, true), _barnsleyFern
-                },
-                {
-                    Tuple.Create(FractalType.BarnsleyFern, false), _barnsleyFern
-                }
-            };
-
-            _selectedFractal = dict[Tuple.Create(_fractalType, _isGpuDataTypeDouble)];
+            _selectedFractal = _dict[Tuple.Create(_fractalType, _isGpuDataTypeDouble)];
         }
 
         private void SetStatusBarLeftText(TimeSpan elapsedTime1, TimeSpan elapsedTime2, TimeSpan elapsedTime3)
@@ -464,6 +460,46 @@ namespace FractalsWpf
         private void SetStatusBarRightText()
         {
             StatusBarRightText.Text = $"Region: ({BottomLeft.X}, {BottomLeft.Y}) ({TopRight.X}, {TopRight.Y})";
+        }
+
+        private void ZoomLevelChanged()
+        {
+            if (!_initDone)
+            {
+                return;
+            }
+
+            if (ZoomLevel == _previousZoomLevel)
+            {
+                return;
+            }
+
+            var diff = ZoomLevel - _previousZoomLevel;
+
+            foreach (var _ in Enumerable.Range(0, Math.Abs(diff)))
+            {
+                var w = TopRight.X - BottomLeft.X;
+                var h = TopRight.Y - BottomLeft.Y;
+
+                if (diff > 0)
+                {
+                    var dw = w / 4;
+                    var dh = h / 4;
+                    BottomLeft = new Point(BottomLeft.X + dw, BottomLeft.Y + dh);
+                    TopRight = new Point(TopRight.X - dw, TopRight.Y - dh);
+                }
+                else
+                {
+                    var dw = w / 2;
+                    var dh = h / 2;
+                    BottomLeft = new Point(BottomLeft.X - dw, BottomLeft.Y - dh);
+                    TopRight = new Point(TopRight.X + dw, TopRight.Y + dh);
+                }
+            }
+
+            Render();
+
+            _previousZoomLevel = ZoomLevel;
         }
 
         private void Render()

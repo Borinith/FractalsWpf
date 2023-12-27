@@ -7,7 +7,7 @@ namespace FractalsWpf
     internal class JuliaSetGpuDouble : IFractal
     {
         private readonly OpenCLRunner _runner;
-        private OpenCLBuffer _resultsBuffer;
+        private OpenCLBuffer? _resultsBuffer;
 
         public JuliaSetGpuDouble()
         {
@@ -35,7 +35,7 @@ namespace FractalsWpf
             _runner.Kernel.SetValueArgument(3, maxIterations);
             _runner.Kernel.SetMemoryArgument(4, _resultsBuffer);
             _runner.RunKernelGlobal2D(numPointsWide, numPointsHigh);
-            _runner.ReadBuffer(_resultsBuffer, results);
+            _runner.ReadBuffer(_resultsBuffer!, results);
             _runner.Finish();
 
             return results;
@@ -44,7 +44,7 @@ namespace FractalsWpf
         public void Dispose()
         {
             _resultsBuffer?.Dispose();
-            _runner?.Dispose();
+            _runner.Dispose();
         }
 
         private void ReallocateResultsBufferIfNecessary(int numResults)
