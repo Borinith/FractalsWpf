@@ -77,17 +77,17 @@ namespace FractalsWpf
             InitializeComponent();
             DataContext = this;
 
+            Closed += (_, __) =>
+            {
+                _selectedFractal?.Dispose();
+            };
+
             ContentRendered += (_, __) =>
             {
-                MaxIterations = 120;
-                ZoomLevel = 1;
                 _previousZoomLevel = 1;
 
                 //BottomLeft = new Point(-2d, -2d);
                 //TopRight = new Point(2d, 2d);
-
-                BottomLeft = new Point(-2.25d, -1.5d);
-                TopRight = new Point(0.75d, 1.5d);
 
                 //BottomLeft = new Point(-1.5d, -0.5d);
                 //TopRight = new Point(-0.5d, 0.5d);
@@ -98,10 +98,7 @@ namespace FractalsWpf
                 //BottomLeft = new Point(-0.22d, -0.70d);
                 //TopRight = new Point(-0.21d, -0.69d);
 
-                //BottomLeft = new Point(-3d, -1d);
-                //TopRight = new Point(3d, 11d);
-
-                AdjustAspectRatio();
+                //AdjustAspectRatio();
 
                 IsMandelbrotSet = true;
                 IsGpuDataTypeDouble = true;
@@ -112,31 +109,8 @@ namespace FractalsWpf
                 Render();
             };
 
-            ZoomLevelSlider.ValueChanged += (_, __) =>
-            {
-                ZoomLevelChanged();
-            };
-
             MaxIterationsSlider.ValueChanged += (_, __) =>
             {
-                Render();
-            };
-
-            SizeChanged += (_, __) =>
-            {
-                _fractalImageWidth = (int)Math.Floor(FractalImageWrapper.ActualWidth);
-                _fractalImageHeight = (int)Math.Floor(FractalImageWrapper.ActualHeight);
-
-                //AdjustAspectRatio();
-                _writeableBitmap = new WriteableBitmap(
-                    _fractalImageWidth,
-                    _fractalImageHeight,
-                    96,
-                    96,
-                    PixelFormats.Bgr32,
-                    null);
-
-                FractalImage.Source = _writeableBitmap;
                 Render();
             };
 
@@ -167,6 +141,11 @@ namespace FractalsWpf
                 panningInProgress = true;
             };
 
+            MouseLeave += (_, __) =>
+            {
+                panningInProgress = false;
+            };
+
             MouseMove += (_, __) =>
             {
                 if (!panningInProgress)
@@ -188,29 +167,7 @@ namespace FractalsWpf
                 lastMousePt = currentMousePt;
             };
 
-            MouseWheel += (_, args) =>
-            {
-                var step = args.Delta > 0
-                    ? 1
-                    : args.Delta < 0
-                        ? -1
-                        : 0;
-
-                ZoomLevel += step;
-                ZoomLevelChanged();
-            };
-
-            MouseUp += (_, __) =>
-            {
-                panningInProgress = false;
-            };
-
-            MouseLeave += (_, __) =>
-            {
-                panningInProgress = false;
-            };
-
-            MouseRightButtonDown += (_, __) =>
+            /*MouseRightButtonDown += (_, __) =>
             {
                 if (IsMandelbrotSet)
                 {
@@ -222,11 +179,30 @@ namespace FractalsWpf
                     _juliaConstant = new Point(regionMouseX, regionMouseY);
                     IsJuliaSet = true;
                 }
+            };*/
+
+            MouseUp += (_, __) =>
+            {
+                panningInProgress = false;
             };
 
-            Closed += (_, __) =>
+            MouseWheel += (_, args) =>
             {
-                _selectedFractal?.Dispose();
+                var step = Math.Sign(args.Delta);
+
+                ZoomLevel += step;
+                ZoomLevelChanged();
+            };
+
+            SetDefaultBtn.Click += (_, __) =>
+            {
+                _ = _fractalType switch
+                {
+                    FractalType.MandelbrotSet => IsMandelbrotSet = true,
+                    FractalType.JuliaSet => IsJuliaSet = true,
+                    FractalType.BarnsleyFern => IsBarnsleyFern = true,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
             };
 
             SetRegionBtn.Click += async (_, __) =>
@@ -243,6 +219,29 @@ namespace FractalsWpf
                 TopRight = new Point(setRegionDialog.TopRightX, setRegionDialog.TopRightY);
                 AdjustAspectRatio();
                 Render();
+            };
+
+            SizeChanged += (_, __) =>
+            {
+                _fractalImageWidth = (int)Math.Floor(FractalImageWrapper.ActualWidth);
+                _fractalImageHeight = (int)Math.Floor(FractalImageWrapper.ActualHeight);
+
+                //AdjustAspectRatio();
+                _writeableBitmap = new WriteableBitmap(
+                    _fractalImageWidth,
+                    _fractalImageHeight,
+                    96,
+                    96,
+                    PixelFormats.Bgr32,
+                    null);
+
+                FractalImage.Source = _writeableBitmap;
+                Render();
+            };
+
+            ZoomLevelSlider.ValueChanged += (_, __) =>
+            {
+                ZoomLevelChanged();
             };
         }
 
@@ -315,12 +314,10 @@ namespace FractalsWpf
                 OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
 
-                MaxIterations = 120;
                 ZoomLevel = 1;
+                MaxIterations = 120;
 
-                BottomLeft = new Point(-2.25d, -1.5d);
-                TopRight = new Point(0.75d, 1.5d);
-
+                SetDefaultPosition();
                 AdjustAspectRatio();
 
                 SelectedColourMap = AvailableColourMaps[0].Item2;
@@ -339,12 +336,10 @@ namespace FractalsWpf
                 OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
 
-                MaxIterations = 4096;
                 ZoomLevel = 1;
+                MaxIterations = 4096;
 
-                BottomLeft = new Point(-2.25d, -1.5d);
-                TopRight = new Point(0.75d, 1.5d);
-
+                SetDefaultPosition();
                 AdjustAspectRatio();
 
                 SelectedColourMap = AvailableColourMaps[0].Item2;
@@ -363,12 +358,10 @@ namespace FractalsWpf
                 OnPropertyChanged("IsBarnsleyFern");
                 UpdateSelectedFractal();
 
-                MaxIterations = 1_000_000;
                 ZoomLevel = 1;
+                MaxIterations = 1_000_000;
 
-                BottomLeft = new Point(-3d, -1d);
-                TopRight = new Point(3d, 11d);
-
+                SetDefaultPosition();
                 AdjustAspectRatio();
 
                 SelectedColourMap = AvailableColourMaps[4].Item2;
@@ -415,6 +408,40 @@ namespace FractalsWpf
 
         private static void SetRegionDialogClosing(object _, DialogClosingEventArgs __)
         {
+        }
+
+        private void SetDefaultPosition()
+        {
+            switch (_fractalType)
+            {
+                case FractalType.MandelbrotSet:
+                {
+                    BottomLeft = new Point(-2.25d, -1.5d);
+                    TopRight = new Point(0.75d, 1.5d);
+
+                    break;
+                }
+
+                case FractalType.JuliaSet:
+                {
+                    _juliaConstant = new Point(-0.35, 0.65);
+                    BottomLeft = new Point(-1.5d, -1.5d);
+                    TopRight = new Point(1.5d, 1.5d);
+
+                    break;
+                }
+
+                case FractalType.BarnsleyFern:
+                {
+                    BottomLeft = new Point(-3d, -1d);
+                    TopRight = new Point(3d, 11d);
+
+                    break;
+                }
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void AdjustAspectRatio()
@@ -497,6 +524,11 @@ namespace FractalsWpf
                 }
             }
 
+            if (IsMandelbrotSet)
+            {
+                MaxIterations += diff * 100;
+            }
+
             Render();
 
             _previousZoomLevel = ZoomLevel;
@@ -537,21 +569,8 @@ namespace FractalsWpf
         {
             var lastIndex = colourMap.Count - 1;
 
-            var vmin = double.MaxValue;
-            var vmax = double.MinValue;
-
-            foreach (var value in values)
-            {
-                if (value < vmin)
-                {
-                    vmin = value;
-                }
-
-                if (value > vmax)
-                {
-                    vmax = value;
-                }
-            }
+            var vmin = Convert.ToDouble(values.Min());
+            var vmax = Convert.ToDouble(values.Max());
 
             var divisor = vmax - vmin;
 

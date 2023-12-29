@@ -77,9 +77,14 @@
                     <ComboBox Width="150" ItemsSource="{Binding Path=AvailableColourMaps}" DisplayMemberPath="Item1"
                               SelectedValuePath="Item2" SelectedValue="{Binding Path=SelectedColourMap}" />
                 </Grid>
-                <Grid HorizontalAlignment="Left" Margin="8">
-                    <Button x:Name="SetRegionBtn">Set region</Button>
-                </Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Grid HorizontalAlignment="Left" Margin="8">
+                        <Button x:Name="SetRegionBtn">Set region</Button>
+                    </Grid>
+                    <Grid HorizontalAlignment="Left" Margin="8">
+                        <Button x:Name="SetDefaultBtn">Set default</Button>
+                    </Grid>
+                </StackPanel>
             </StackPanel>
 
             <StatusBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
