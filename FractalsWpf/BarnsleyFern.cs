@@ -26,15 +26,19 @@ namespace FractalsWpf
             foreach (var pt in Points().Take(maxIterations))
             {
                 var transformedX = (pt.X - translateX) * scaleX;
-                var transformedY = (pt.Y - translateY) * scaleY;
                 var x = (int)Math.Truncate(transformedX);
-                var y = (int)Math.Truncate(transformedY);
 
-                var pointCoordinate = (numPointsHigh - y) * numPointsWide + x;
-
-                if (pointCoordinate >= 0 && pointCoordinate < numResults)
+                if (x >= 0 && x < numPointsWide)
                 {
-                    results[pointCoordinate] = 1;
+                    var transformedY = (pt.Y - translateY) * scaleY;
+                    var y = (int)Math.Truncate(transformedY);
+
+                    var pointCoordinate = (numPointsHigh - y) * numPointsWide + x;
+
+                    if (pointCoordinate >= 0 && pointCoordinate < numResults)
+                    {
+                        results[pointCoordinate] = 1;
+                    }
                 }
             }
 
@@ -59,7 +63,7 @@ namespace FractalsWpf
                 var yn = pt.Y;
                 var r = random.Next(1, 101);
 
-                if (r == 1)
+                if (r <= 1)
                 {
                     // xn + 1 = 0
                     // yn + 1 = 0.16 yn

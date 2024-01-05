@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FractalsWpf.Enums;
+using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 
@@ -6,11 +7,11 @@ namespace FractalsWpf
 {
     public static class ColourMapDataDictionary
     {
-        private static readonly FrozenDictionary<string, double[][]> JetData =
-            new Dictionary<string, double[][]>
+        private static readonly FrozenDictionary<ColourEnum, double[][]> JetData =
+            new Dictionary<ColourEnum, double[][]>
             {
                 {
-                    "red", new[]
+                    ColourEnum.Red, new[]
                     {
                         new[] { 0d, 0, 0 },
                         new[] { 0.35, 0, 0 },
@@ -20,7 +21,7 @@ namespace FractalsWpf
                     }
                 },
                 {
-                    "green", new[]
+                    ColourEnum.Green, new[]
                     {
                         new[] { 0d, 0, 0 },
                         new[] { 0.125, 0, 0 },
@@ -31,7 +32,7 @@ namespace FractalsWpf
                     }
                 },
                 {
-                    "blue", new[]
+                    ColourEnum.Blue, new[]
                     {
                         new[] { 0, 0.5, 0.5 },
                         new[] { 0.11, 1, 1 },
@@ -42,11 +43,11 @@ namespace FractalsWpf
                 }
             }.ToFrozenDictionary();
 
-        private static readonly FrozenDictionary<string, double[][]> GistSternData =
-            new Dictionary<string, double[][]>
+        private static readonly FrozenDictionary<ColourEnum, double[][]> GistSternData =
+            new Dictionary<ColourEnum, double[][]>
             {
                 {
-                    "red", new[]
+                    ColourEnum.Red, new[]
                     {
                         new[] { 0d, 0, 0 },
                         new[] { 0.0547, 1, 1 },
@@ -55,14 +56,14 @@ namespace FractalsWpf
                     }
                 },
                 {
-                    "green", new[]
+                    ColourEnum.Green, new[]
                     {
                         new[] { 0d, 0, 0 },
                         new[] { 1d, 0, 0 }
                     }
                 },
                 {
-                    "blue", new[]
+                    ColourEnum.Blue, new[]
                     {
                         new[] { 0d, 0, 0 },
                         new[] { 0.5, 1, 1 },
@@ -72,11 +73,15 @@ namespace FractalsWpf
                 }
             }.ToFrozenDictionary();
 
-        private static readonly FrozenDictionary<string, FrozenDictionary<string, double[][]>> DataDictionary =
-            new Dictionary<string, FrozenDictionary<string, double[][]>>(StringComparer.InvariantCultureIgnoreCase)
+        private static readonly FrozenDictionary<ColourMapEnum, FrozenDictionary<ColourEnum, double[][]>> DataDictionary =
+            new Dictionary<ColourMapEnum, FrozenDictionary<ColourEnum, double[][]>>
             {
-                { "jet", JetData },
-                { "gist_stern", GistSternData }
+                {
+                    ColourMapEnum.Jet, JetData
+                },
+                {
+                    ColourMapEnum.GistStern, GistSternData
+                }
             }.ToFrozenDictionary();
         
         // ReSharper disable ConvertClosureToMethodGroup
@@ -132,64 +137,104 @@ namespace FractalsWpf
         //     ret[m] = x[m] / 0.08 - 11.5
         //     return ret
 
-        private static readonly FrozenDictionary<string, Func<double, double>> OceanData =
-            new Dictionary<string, Func<double, double>>
+        private static readonly FrozenDictionary<ColourEnum, Func<double, double>> OceanData =
+            new Dictionary<ColourEnum, Func<double, double>>
             {
-                { "red", GnuplotPaletteFunctions[23] },
-                { "green", GnuplotPaletteFunctions[28] },
-                { "blue", GnuplotPaletteFunctions[3] }
+                {
+                    ColourEnum.Red, GnuplotPaletteFunctions[23]
+                },
+                {
+                    ColourEnum.Green, GnuplotPaletteFunctions[28]
+                },
+                {
+                    ColourEnum.Blue, GnuplotPaletteFunctions[3]
+                }
             }.ToFrozenDictionary();
 
-        private static readonly FrozenDictionary<string, Func<double, double>> RainbowData =
-            new Dictionary<string, Func<double, double>>
+        private static readonly FrozenDictionary<ColourEnum, Func<double, double>> RainbowData =
+            new Dictionary<ColourEnum, Func<double, double>>
             {
-                { "red", GnuplotPaletteFunctions[33] },
-                { "green", GnuplotPaletteFunctions[13] },
-                { "blue", GnuplotPaletteFunctions[10] }
+                {
+                    ColourEnum.Red, GnuplotPaletteFunctions[33]
+                },
+                {
+                    ColourEnum.Green, GnuplotPaletteFunctions[13]
+                },
+                {
+                    ColourEnum.Blue, GnuplotPaletteFunctions[10]
+                }
             }.ToFrozenDictionary();
 
-        private static readonly FrozenDictionary<string, Func<double, double>> GnuPlotData =
-            new Dictionary<string, Func<double, double>>
+        private static readonly FrozenDictionary<ColourEnum, Func<double, double>> GnuPlotData =
+            new Dictionary<ColourEnum, Func<double, double>>
             {
-                { "red", GnuplotPaletteFunctions[7] },
-                { "green", GnuplotPaletteFunctions[5] },
-                { "blue", GnuplotPaletteFunctions[15] }
+                {
+                    ColourEnum.Red, GnuplotPaletteFunctions[7]
+                },
+                {
+                    ColourEnum.Green, GnuplotPaletteFunctions[5]
+                },
+                {
+                    ColourEnum.Blue, GnuplotPaletteFunctions[15]
+                }
             }.ToFrozenDictionary();
 
-        private static readonly FrozenDictionary<string, Func<double, double>> AfmHotData =
-            new Dictionary<string, Func<double, double>>
+        private static readonly FrozenDictionary<ColourEnum, Func<double, double>> AfmHotData =
+            new Dictionary<ColourEnum, Func<double, double>>
             {
-                { "red", GnuplotPaletteFunctions[34] },
-                { "green", GnuplotPaletteFunctions[35] },
-                { "blue", GnuplotPaletteFunctions[36] }
+                {
+                    ColourEnum.Red, GnuplotPaletteFunctions[34]
+                },
+                {
+                    ColourEnum.Green, GnuplotPaletteFunctions[35]
+                },
+                {
+                    ColourEnum.Blue, GnuplotPaletteFunctions[36]
+                }
             }.ToFrozenDictionary();
 
-        private static readonly FrozenDictionary<string, Func<double, double>> GistHeatData =
-            new Dictionary<string, Func<double, double>>
+        private static readonly FrozenDictionary<ColourEnum, Func<double, double>> GistHeatData =
+            new Dictionary<ColourEnum, Func<double, double>>
             {
-                { "red", x => 1.5 * x },
-                { "green", x => 2 * x - 1 },
-                { "blue", x => 4 * x - 3 }
+                {
+                    ColourEnum.Red, x => 1.5 * x
+                },
+                {
+                    ColourEnum.Green, x => 2 * x - 1
+                },
+                {
+                    ColourEnum.Blue, x => 4 * x - 3
+                }
             }.ToFrozenDictionary();
 
-        private static readonly FrozenDictionary<string, FrozenDictionary<string, Func<double, double>>> DataDictionary2 =
-            new Dictionary<string, FrozenDictionary<string, Func<double, double>>>(StringComparer.InvariantCultureIgnoreCase)
+        private static readonly FrozenDictionary<ColourMapEnum, FrozenDictionary<ColourEnum, Func<double, double>>> DataDictionary2 =
+            new Dictionary<ColourMapEnum, FrozenDictionary<ColourEnum, Func<double, double>>>
             {
-                { "ocean", OceanData },
-                { "rainbow", RainbowData },
-                { "gnuplot", GnuPlotData },
-                { "afmhot", AfmHotData },
-                { "gist_heat", GistHeatData }
+                {
+                    ColourMapEnum.Ocean, OceanData
+                },
+                {
+                    ColourMapEnum.Rainbow, RainbowData
+                },
+                {
+                    ColourMapEnum.GnuPlot, GnuPlotData
+                },
+                {
+                    ColourMapEnum.AfmHot, AfmHotData
+                },
+                {
+                    ColourMapEnum.GistHeat, GistHeatData
+                }
             }.ToFrozenDictionary();
 
-        public static FrozenDictionary<string, double[][]>? ColourMapData(string name)
+        public static FrozenDictionary<ColourEnum, double[][]>? ColourMapData(ColourMapEnum colourMap)
         {
-            return DataDictionary.TryGetValue(name, out var value) ? value : null;
+            return DataDictionary.TryGetValue(colourMap, out var value) ? value : null;
         }
 
-        public static FrozenDictionary<string, Func<double, double>>? ColourMapData2(string name)
+        public static FrozenDictionary<ColourEnum, Func<double, double>>? ColourMapData2(ColourMapEnum colourMap)
         {
-            return DataDictionary2.TryGetValue(name, out var value) ? value : null;
+            return DataDictionary2.TryGetValue(colourMap, out var value) ? value : null;
         }
     }
 }

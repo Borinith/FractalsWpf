@@ -74,8 +74,9 @@
                     </RadioButton>
                 </StackPanel>-->
                 <Grid HorizontalAlignment="Left" Margin="8">
-                    <ComboBox Width="150" ItemsSource="{Binding Path=AvailableColourMaps}" DisplayMemberPath="Item1"
-                              SelectedValuePath="Item2" SelectedValue="{Binding Path=SelectedColourMap}" />
+                    <ComboBox MaxDropDownHeight="Auto" Width="150" ItemsSource="{Binding Path=AvailableColourMaps}"
+                              DisplayMemberPath="Key" SelectedValuePath="Value"
+                              SelectedValue="{Binding Path=SelectedColourMap}" />
                 </Grid>
                 <StackPanel Orientation="Horizontal">
                     <Grid HorizontalAlignment="Left" Margin="8">

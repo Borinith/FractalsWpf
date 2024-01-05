@@ -1,4 +1,5 @@
-﻿using MaterialDesignThemes.Wpf;
+﻿using FractalsWpf.Enums;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
@@ -13,23 +14,30 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+// ReSharper disable ExplicitCallerInfoArgument
+
 namespace FractalsWpf
 {
     public sealed partial class MainWindow : INotifyPropertyChanged
     {
-        private static readonly int[] JetColourMap = ColourMaps.GetColourMap("jet");
-        private static readonly int[] GistSternColourMap = ColourMaps.GetColourMap("gist_stern");
-        private static readonly int[] OceanColourMap = ColourMaps.GetColourMap("ocean");
-        private static readonly int[] RainbowColourMap = ColourMaps.GetColourMap("rainbow");
-        private static readonly int[] GnuPlotColourMap = ColourMaps.GetColourMap("gnuplot");
-        private static readonly int[] AfmHotColourMap = ColourMaps.GetColourMap("afmhot");
-        private static readonly int[] GistHeatColourMap = ColourMaps.GetColourMap("gist_heat");
+        private const string IS_MANDELBROT_SET_TEXT = "IsMandelbrotSet";
+        private const string IS_JULIA_SET_TEXT = "IsJuliaSet";
+        private const string IS_BARNSLEY_FERN_TEXT = "IsBarnsleyFern";
 
-        private static readonly int[] ForestGreenColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] { Colors.ForestGreen.ToInt() }).ToArray();
+        private static readonly int[] JetColourMap = ColourMaps.GetColourMap(ColourMapEnum.Jet);
+        private static readonly int[] GistSternColourMap = ColourMaps.GetColourMap(ColourMapEnum.GistStern);
+        private static readonly int[] OceanColourMap = ColourMaps.GetColourMap(ColourMapEnum.Ocean);
+        private static readonly int[] RainbowColourMap = ColourMaps.GetColourMap(ColourMapEnum.Rainbow);
+        private static readonly int[] GnuPlotColourMap = ColourMaps.GetColourMap(ColourMapEnum.GnuPlot);
+        private static readonly int[] AfmHotColourMap = ColourMaps.GetColourMap(ColourMapEnum.AfmHot);
+        private static readonly int[] GistHeatColourMap = ColourMaps.GetColourMap(ColourMapEnum.GistHeat);
+
+        private static readonly int[] ForestGreenWhiteColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] { Colors.ForestGreen.ToInt() }).ToArray();
+        private static readonly int[] ForestGreenBlackColourMap = Enumerable.Repeat(Colors.Black.ToInt(), 255).Concat(new[] { Colors.ForestGreen.ToInt() }).ToArray();
         private static readonly int[] MonochromeColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] { Colors.Black.ToInt() }).ToArray();
 
         private readonly IFractal _barnsleyFern = new BarnsleyFern();
-        private readonly FrozenDictionary<Tuple<FractalType, bool>, IFractal> _dict;
+        private readonly FrozenDictionary<Tuple<FractalTypeEnum, bool>, IFractal> _dict;
         private readonly IFractal _juliaSetGpuDouble = new JuliaSetGpuDouble();
         private readonly IFractal _juliaSetGpuFloat = new JuliaSetGpuFloat();
         private readonly IFractal _mandelbrotSetGpuDouble = new MandelbrotSetGpuDouble();
@@ -38,7 +46,7 @@ namespace FractalsWpf
         private Point _bottomLeft;
         private int _fractalImageHeight;
         private int _fractalImageWidth;
-        private FractalType _fractalType;
+        private FractalTypeEnum _fractalType;
         private bool _initDone;
         private bool _isGpuDataTypeDouble;
         private Point _juliaConstant = new(-0.35, 0.65);
@@ -52,25 +60,25 @@ namespace FractalsWpf
 
         public MainWindow()
         {
-            _dict = new Dictionary<Tuple<FractalType, bool>, IFractal>
+            _dict = new Dictionary<Tuple<FractalTypeEnum, bool>, IFractal>
             {
                 {
-                    Tuple.Create(FractalType.MandelbrotSet, true), _mandelbrotSetGpuDouble
+                    Tuple.Create(FractalTypeEnum.MandelbrotSet, true), _mandelbrotSetGpuDouble
                 },
                 {
-                    Tuple.Create(FractalType.MandelbrotSet, false), _mandelbrotSetGpuFloat
+                    Tuple.Create(FractalTypeEnum.MandelbrotSet, false), _mandelbrotSetGpuFloat
                 },
                 {
-                    Tuple.Create(FractalType.JuliaSet, true), _juliaSetGpuDouble
+                    Tuple.Create(FractalTypeEnum.JuliaSet, true), _juliaSetGpuDouble
                 },
                 {
-                    Tuple.Create(FractalType.JuliaSet, false), _juliaSetGpuFloat
+                    Tuple.Create(FractalTypeEnum.JuliaSet, false), _juliaSetGpuFloat
                 },
                 {
-                    Tuple.Create(FractalType.BarnsleyFern, true), _barnsleyFern
+                    Tuple.Create(FractalTypeEnum.BarnsleyFern, true), _barnsleyFern
                 },
                 {
-                    Tuple.Create(FractalType.BarnsleyFern, false), _barnsleyFern
+                    Tuple.Create(FractalTypeEnum.BarnsleyFern, false), _barnsleyFern
                 }
             }.ToFrozenDictionary();
 
@@ -102,7 +110,6 @@ namespace FractalsWpf
 
                 IsMandelbrotSet = true;
                 IsGpuDataTypeDouble = true;
-                SelectedColourMap = AvailableColourMaps[0].Item2;
 
                 _initDone = true;
 
@@ -194,13 +201,13 @@ namespace FractalsWpf
                 ZoomLevelChanged();
             };
 
-            SetDefaultBtn.Click += (_, __) =>
+            SetDefaultBtn.Click += (__, ___) =>
             {
                 _ = _fractalType switch
                 {
-                    FractalType.MandelbrotSet => IsMandelbrotSet = true,
-                    FractalType.JuliaSet => IsJuliaSet = true,
-                    FractalType.BarnsleyFern => IsBarnsleyFern = true,
+                    FractalTypeEnum.MandelbrotSet => IsMandelbrotSet = true,
+                    FractalTypeEnum.JuliaSet => IsJuliaSet = true,
+                    FractalTypeEnum.BarnsleyFern => IsBarnsleyFern = true,
                     _ => throw new ArgumentOutOfRangeException()
                 };
             };
@@ -227,6 +234,7 @@ namespace FractalsWpf
                 _fractalImageHeight = (int)Math.Floor(FractalImageWrapper.ActualHeight);
 
                 //AdjustAspectRatio();
+
                 _writeableBitmap = new WriteableBitmap(
                     _fractalImageWidth,
                     _fractalImageHeight,
@@ -245,18 +253,39 @@ namespace FractalsWpf
             };
         }
 
-        public static List<Tuple<string, int[]>> AvailableColourMaps => new()
+        public static FrozenDictionary<ColourMapEnum, int[]> AvailableColourMaps => new Dictionary<ColourMapEnum, int[]>
         {
-            Tuple.Create("Jet", JetColourMap),
-            Tuple.Create("GistStern", GistSternColourMap),
-            Tuple.Create("Ocean", OceanColourMap),
-            Tuple.Create("Rainbow", RainbowColourMap),
-            Tuple.Create("GnuPlot", GnuPlotColourMap),
-            Tuple.Create("AfmHot", AfmHotColourMap),
-            Tuple.Create("GistHeat", GistHeatColourMap),
-            Tuple.Create("ForestGreen", ForestGreenColourMap),
-            Tuple.Create("Monochrome", MonochromeColourMap)
-        };
+            {
+                ColourMapEnum.Jet, JetColourMap
+            },
+            {
+                ColourMapEnum.GistStern, GistSternColourMap
+            },
+            {
+                ColourMapEnum.Ocean, OceanColourMap
+            },
+            {
+                ColourMapEnum.Rainbow, RainbowColourMap
+            },
+            {
+                ColourMapEnum.GnuPlot, GnuPlotColourMap
+            },
+            {
+                ColourMapEnum.AfmHot, AfmHotColourMap
+            },
+            {
+                ColourMapEnum.GistHeat, GistHeatColourMap
+            },
+            {
+                ColourMapEnum.ForestGreenWhite, ForestGreenWhiteColourMap
+            },
+            {
+                ColourMapEnum.ForestGreenBlack, ForestGreenBlackColourMap
+            },
+            {
+                ColourMapEnum.Monochrome, MonochromeColourMap
+            }
+        }.ToFrozenDictionary();
 
         public Point BottomLeft
         {
@@ -305,13 +334,13 @@ namespace FractalsWpf
 
         public bool IsMandelbrotSet
         {
-            get => _fractalType == FractalType.MandelbrotSet;
+            get => _fractalType == FractalTypeEnum.MandelbrotSet;
             set
             {
-                _fractalType = FractalType.MandelbrotSet;
-                OnPropertyChanged("IsMandelbrotSet");
-                OnPropertyChanged("IsJuliaSet");
-                OnPropertyChanged("IsBarnsleyFern");
+                _fractalType = FractalTypeEnum.MandelbrotSet;
+                OnPropertyChanged(IS_MANDELBROT_SET_TEXT);
+                OnPropertyChanged(IS_JULIA_SET_TEXT);
+                OnPropertyChanged(IS_BARNSLEY_FERN_TEXT);
                 UpdateSelectedFractal();
 
                 ZoomLevel = 1;
@@ -320,20 +349,20 @@ namespace FractalsWpf
                 SetDefaultPosition();
                 AdjustAspectRatio();
 
-                SelectedColourMap = AvailableColourMaps[0].Item2;
+                SelectedColourMap = AvailableColourMaps[ColourMapEnum.Jet];
                 Render();
             }
         }
 
         public bool IsJuliaSet
         {
-            get => _fractalType == FractalType.JuliaSet;
+            get => _fractalType == FractalTypeEnum.JuliaSet;
             set
             {
-                _fractalType = FractalType.JuliaSet;
-                OnPropertyChanged("IsMandelbrotSet");
-                OnPropertyChanged("IsJuliaSet");
-                OnPropertyChanged("IsBarnsleyFern");
+                _fractalType = FractalTypeEnum.JuliaSet;
+                OnPropertyChanged(IS_MANDELBROT_SET_TEXT);
+                OnPropertyChanged(IS_JULIA_SET_TEXT);
+                OnPropertyChanged(IS_BARNSLEY_FERN_TEXT);
                 UpdateSelectedFractal();
 
                 ZoomLevel = 1;
@@ -342,20 +371,20 @@ namespace FractalsWpf
                 SetDefaultPosition();
                 AdjustAspectRatio();
 
-                SelectedColourMap = AvailableColourMaps[0].Item2;
+                SelectedColourMap = AvailableColourMaps[ColourMapEnum.Jet];
                 Render();
             }
         }
 
         public bool IsBarnsleyFern
         {
-            get => _fractalType == FractalType.BarnsleyFern;
+            get => _fractalType == FractalTypeEnum.BarnsleyFern;
             set
             {
-                _fractalType = FractalType.BarnsleyFern;
-                OnPropertyChanged("IsMandelbrotSet");
-                OnPropertyChanged("IsJuliaSet");
-                OnPropertyChanged("IsBarnsleyFern");
+                _fractalType = FractalTypeEnum.BarnsleyFern;
+                OnPropertyChanged(IS_MANDELBROT_SET_TEXT);
+                OnPropertyChanged(IS_JULIA_SET_TEXT);
+                OnPropertyChanged(IS_BARNSLEY_FERN_TEXT);
                 UpdateSelectedFractal();
 
                 ZoomLevel = 1;
@@ -364,7 +393,7 @@ namespace FractalsWpf
                 SetDefaultPosition();
                 AdjustAspectRatio();
 
-                SelectedColourMap = AvailableColourMaps[4].Item2;
+                SelectedColourMap = AvailableColourMaps[ColourMapEnum.ForestGreenBlack];
                 Render();
             }
         }
@@ -414,7 +443,7 @@ namespace FractalsWpf
         {
             switch (_fractalType)
             {
-                case FractalType.MandelbrotSet:
+                case FractalTypeEnum.MandelbrotSet:
                 {
                     BottomLeft = new Point(-2.25d, -1.5d);
                     TopRight = new Point(0.75d, 1.5d);
@@ -422,7 +451,7 @@ namespace FractalsWpf
                     break;
                 }
 
-                case FractalType.JuliaSet:
+                case FractalTypeEnum.JuliaSet:
                 {
                     _juliaConstant = new Point(-0.35, 0.65);
                     BottomLeft = new Point(-1.5d, -1.5d);
@@ -431,7 +460,7 @@ namespace FractalsWpf
                     break;
                 }
 
-                case FractalType.BarnsleyFern:
+                case FractalTypeEnum.BarnsleyFern:
                 {
                     BottomLeft = new Point(-3d, -1d);
                     TopRight = new Point(3d, 11d);
@@ -527,6 +556,10 @@ namespace FractalsWpf
             if (IsMandelbrotSet)
             {
                 MaxIterations += diff * 100;
+            }
+            else if (IsBarnsleyFern)
+            {
+                MaxIterations += diff * 500_000;
             }
 
             Render();

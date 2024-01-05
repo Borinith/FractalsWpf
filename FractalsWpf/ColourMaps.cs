@@ -1,4 +1,5 @@
-﻿using MathNet.Numerics;
+﻿using FractalsWpf.Enums;
+using MathNet.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,11 @@ namespace FractalsWpf
         // https://github.com/matplotlib/matplotlib/blob/master/lib/matplotlib/_cm.py
         // https://github.com/matplotlib/matplotlib/blob/master/lib/matplotlib/colors.py
 
-        public static int[] GetColourMap(string name)
+        public static int[] GetColourMap(ColourMapEnum colourMap)
         {
             const int n = 256;
 
-            var values = GetColourMapRgbaValues(name, n);
+            var values = GetColourMapRgbaValues(colourMap, n);
 
             return Enumerable.Range(0, n)
                 .Select(index =>
@@ -28,31 +29,31 @@ namespace FractalsWpf
                 }).ToArray();
         }
 
-        public static double[][] GetColourMapRgbaValues(string name, int n)
+        public static double[][] GetColourMapRgbaValues(ColourMapEnum colourMap, int n)
         {
-            var colourMapData = ColourMapDataDictionary.ColourMapData(name);
+            var colourMapData = ColourMapDataDictionary.ColourMapData(colourMap);
 
             if (colourMapData != null)
             {
-                var rs = MakeMappingArray(n, colourMapData["red"]);
-                var gs = MakeMappingArray(n, colourMapData["green"]);
-                var bs = MakeMappingArray(n, colourMapData["blue"]);
+                var rs = MakeMappingArray(n, colourMapData[ColourEnum.Red]);
+                var gs = MakeMappingArray(n, colourMapData[ColourEnum.Green]);
+                var bs = MakeMappingArray(n, colourMapData[ColourEnum.Blue]);
 
                 return RsGsBsToColourValues(n, rs, gs, bs);
             }
 
-            var colourMapData2 = ColourMapDataDictionary.ColourMapData2(name);
+            var colourMapData2 = ColourMapDataDictionary.ColourMapData2(colourMap);
 
             if (colourMapData2 != null)
             {
-                var rs = MakeMappingArray2(n, colourMapData2["red"]);
-                var gs = MakeMappingArray2(n, colourMapData2["green"]);
-                var bs = MakeMappingArray2(n, colourMapData2["blue"]);
+                var rs = MakeMappingArray2(n, colourMapData2[ColourEnum.Red]);
+                var gs = MakeMappingArray2(n, colourMapData2[ColourEnum.Green]);
+                var bs = MakeMappingArray2(n, colourMapData2[ColourEnum.Blue]);
 
                 return RsGsBsToColourValues(n, rs, gs, bs);
             }
 
-            throw new InvalidOperationException($"Failed to find a colour map called \"${name}\".");
+            throw new InvalidOperationException($"Failed to find a colour map called \"${colourMap}\".");
         }
 
         private static double[][] RsGsBsToColourValues(

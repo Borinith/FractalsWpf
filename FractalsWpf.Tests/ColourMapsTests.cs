@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FractalsWpf.Enums;
+using System.Collections.Generic;
 using Xunit;
 
 namespace FractalsWpf.Tests
@@ -8,7 +9,7 @@ namespace FractalsWpf.Tests
         [Fact]
         public void ColourMapNotUsingLambdas()
         {
-            var actual = ColourMaps.GetColourMapRgbaValues("jet", 16);
+            var actual = ColourMaps.GetColourMapRgbaValues(ColourMapEnum.Jet, 16);
 
             var expected = new[]
             {
@@ -36,7 +37,7 @@ namespace FractalsWpf.Tests
         [Fact]
         public void ColourMapUsingLambdas()
         {
-            var actual = ColourMaps.GetColourMapRgbaValues("ocean", 16);
+            var actual = ColourMaps.GetColourMapRgbaValues(ColourMapEnum.Ocean, 16);
 
             var expected = new[]
             {

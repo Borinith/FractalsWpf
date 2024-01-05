@@ -1,6 +1,6 @@
-﻿namespace FractalsWpf
+﻿namespace FractalsWpf.Enums
 {
-    public enum FractalType
+    public enum FractalTypeEnum
     {
         MandelbrotSet = 0,
         JuliaSet = 1,
