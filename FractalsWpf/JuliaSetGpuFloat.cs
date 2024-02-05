@@ -1,9 +1,10 @@
-﻿using OpenCL;
+﻿using FractalsWpf.Interfaces;
+using OpenCL;
 using System.Numerics;
 
 namespace FractalsWpf
 {
-    internal class JuliaSetGpuFloat : IFractal
+    internal class JuliaSetGpuFloat : IFractalDisposable
     {
         private readonly OpenCLRunner _runner;
         private OpenCLBuffer? _resultsBuffer;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FractalsWpf.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -43,10 +44,6 @@ namespace FractalsWpf
             }
 
             return results;
-        }
-
-        public void Dispose()
-        {
         }
 
         private static IEnumerable<Point> Points()

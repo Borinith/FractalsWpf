@@ -1,4 +1,5 @@
 ﻿using FractalsWpf.Enums;
+using FractalsWpf.Interfaces;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Frozen;
@@ -87,7 +88,7 @@ namespace FractalsWpf
 
             Closed += (_, __) =>
             {
-                _selectedFractal?.Dispose();
+                (_selectedFractal as IFractalDisposable)?.Dispose();
             };
 
             ContentRendered += (_, __) =>

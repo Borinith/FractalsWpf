@@ -1,9 +1,10 @@
-﻿using OpenCL;
+﻿using FractalsWpf.Interfaces;
+using OpenCL;
 using System.Numerics;
 
 namespace FractalsWpf
 {
-    internal class MandelbrotSetGpuFloat : IFractal
+    internal class MandelbrotSetGpuFloat : IFractalDisposable
     {
         private readonly OpenCLRunner _runner;
         private OpenCLBuffer? _resultsBuffer;

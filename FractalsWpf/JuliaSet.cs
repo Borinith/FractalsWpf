@@ -1,4 +1,5 @@
-﻿using MathNet.Numerics;
+﻿using FractalsWpf.Interfaces;
+using MathNet.Numerics;
 using System.Linq;
 using System.Numerics;
 
@@ -24,10 +25,6 @@ namespace FractalsWpf
                 select BeginsToDivergeAt(c, pt, maxIterations);
 
             return pixels.ToArray();
-        }
-
-        public void Dispose()
-        {
         }
 
         private static ushort BeginsToDivergeAt(Complex c, Complex z, int maxIterations)
