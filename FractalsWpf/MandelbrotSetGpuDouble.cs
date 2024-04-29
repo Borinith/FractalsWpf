@@ -34,12 +34,9 @@ namespace FractalsWpf
             _runner.Kernel.SetValueArgument(2, maxIterations);
             _runner.Kernel.SetMemoryArgument(3, _resultsBuffer);
             _runner.RunKernelGlobal2D(numPointsWide, numPointsHigh);
-
-            //_runner.Finish();
-            //_runner.ReadBuffer(_resultsBuffer, results);
-
+            _runner.ReadBuffer(_resultsBuffer!, results);
+            //_runner.ReadMappedBuffer(_resultsBuffer!, results);
             _runner.Finish();
-            _runner.ReadMappedBuffer(_resultsBuffer!, results);
 
             return results;
         }
