@@ -2,16 +2,16 @@
 using OpenCL;
 using System.Numerics;
 
-namespace FractalsWpf
+namespace FractalsWpf.CollatzConjecture
 {
-    internal class MandelbrotSetGpuDouble : IFractalDisposable
+    public class CollatzConjectureFloat : IFractalDisposable
     {
         private readonly OpenCLRunner _runner;
         private OpenCLBuffer? _resultsBuffer;
 
-        public MandelbrotSetGpuDouble()
+        public CollatzConjectureFloat()
         {
-            _runner = new OpenCLRunner("CreatePixelArrayMandelbrotSetDouble");
+            _runner = new OpenCLRunner("CreatePixelArrayCollatzConjectureFloat");
         }
 
         public ushort[] CreatePixelArray(
@@ -29,13 +29,12 @@ namespace FractalsWpf
 
             ReallocateResultsBufferIfNecessary(numResults);
 
-            _runner.Kernel.SetValueArgument(0, bottomLeft);
-            _runner.Kernel.SetValueArgument(1, new Complex(deltaReal, deltaImaginary));
+            _runner.Kernel.SetValueArgument(0, new Vector2((float)bottomLeft.Real, (float)bottomLeft.Imaginary));
+            _runner.Kernel.SetValueArgument(1, new Vector2((float)deltaReal, (float)deltaImaginary));
             _runner.Kernel.SetValueArgument(2, maxIterations);
             _runner.Kernel.SetMemoryArgument(3, _resultsBuffer);
             _runner.RunKernelGlobal2D(numPointsWide, numPointsHigh);
             _runner.ReadBuffer(_resultsBuffer!, results);
-            //_runner.ReadMappedBuffer(_resultsBuffer!, results);
             _runner.Finish();
 
             return results;

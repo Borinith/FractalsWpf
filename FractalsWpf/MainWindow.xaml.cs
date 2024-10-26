@@ -1,5 +1,8 @@
-﻿using FractalsWpf.Enums;
+﻿using FractalsWpf.CollatzConjecture;
+using FractalsWpf.Enums;
 using FractalsWpf.Interfaces;
+using FractalsWpf.JuliaSet;
+using FractalsWpf.MandelbrotSet;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Frozen;
@@ -24,6 +27,7 @@ namespace FractalsWpf
         private const string IS_MANDELBROT_SET_TEXT = "IsMandelbrotSet";
         private const string IS_JULIA_SET_TEXT = "IsJuliaSet";
         private const string IS_BARNSLEY_FERN_TEXT = "IsBarnsleyFern";
+        private const string IS_COLLATZ_CONJECTURE_TEXT = "IsCollatzConjecture";
 
         private static readonly int[] JetColourMap = ColourMaps.GetColourMap(ColourMapEnum.Jet);
         private static readonly int[] GistSternColourMap = ColourMaps.GetColourMap(ColourMapEnum.GistStern);
@@ -37,10 +41,17 @@ namespace FractalsWpf
         private static readonly int[] ForestGreenBlackColourMap = Enumerable.Repeat(Colors.Black.ToInt(), 255).Concat(new[] { Colors.ForestGreen.ToInt() }).ToArray();
         private static readonly int[] MonochromeColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] { Colors.Black.ToInt() }).ToArray();
 
-        private readonly IFractal _barnsleyFern = new BarnsleyFern();
-        private readonly FrozenDictionary<Tuple<FractalTypeEnum, bool>, IFractal> _dict;
+        private readonly IFractal _barnsleyFern = new BarnsleyFern.BarnsleyFern();
+
+        private readonly IFractal _collatzConjectureGpuDouble = new CollatzConjectureDouble();
+        private readonly IFractal _collatzConjectureGpuFloat = new CollatzConjectureFloat();
+
+        private readonly FrozenDictionary<(FractalTypeEnum FractalType, bool IsGpuDataTypeDouble), IFractal> _dict;
+
+        private readonly Point _juliaConstant = new(-0.35, 0.65);
         private readonly IFractal _juliaSetGpuDouble = new JuliaSetGpuDouble();
         private readonly IFractal _juliaSetGpuFloat = new JuliaSetGpuFloat();
+
         private readonly IFractal _mandelbrotSetGpuDouble = new MandelbrotSetGpuDouble();
         private readonly IFractal _mandelbrotSetGpuFloat = new MandelbrotSetGpuFloat();
 
@@ -50,7 +61,6 @@ namespace FractalsWpf
         private FractalTypeEnum _fractalType;
         private bool _initDone;
         private bool _isGpuDataTypeDouble;
-        private Point _juliaConstant = new(-0.35, 0.65);
         private int _maxIterations;
         private int _previousZoomLevel;
         private int[] _selectedColourMap;
@@ -61,35 +71,38 @@ namespace FractalsWpf
 
         public MainWindow()
         {
-            _dict = new Dictionary<Tuple<FractalTypeEnum, bool>, IFractal>
+            _dict = new Dictionary<(FractalTypeEnum FractalType, bool IsGpuDataTypeDouble), IFractal>
             {
                 {
-                    Tuple.Create(FractalTypeEnum.MandelbrotSet, true), _mandelbrotSetGpuDouble
+                    (FractalTypeEnum.MandelbrotSet, true), _mandelbrotSetGpuDouble
                 },
                 {
-                    Tuple.Create(FractalTypeEnum.MandelbrotSet, false), _mandelbrotSetGpuFloat
+                    (FractalTypeEnum.MandelbrotSet, false), _mandelbrotSetGpuFloat
                 },
                 {
-                    Tuple.Create(FractalTypeEnum.JuliaSet, true), _juliaSetGpuDouble
+                    (FractalTypeEnum.JuliaSet, true), _juliaSetGpuDouble
                 },
                 {
-                    Tuple.Create(FractalTypeEnum.JuliaSet, false), _juliaSetGpuFloat
+                    (FractalTypeEnum.JuliaSet, false), _juliaSetGpuFloat
                 },
                 {
-                    Tuple.Create(FractalTypeEnum.BarnsleyFern, true), _barnsleyFern
+                    (FractalTypeEnum.BarnsleyFern, true), _barnsleyFern
                 },
                 {
-                    Tuple.Create(FractalTypeEnum.BarnsleyFern, false), _barnsleyFern
+                    (FractalTypeEnum.BarnsleyFern, false), _barnsleyFern
+                },
+                {
+                    (FractalTypeEnum.CollatzConjecture, true), _collatzConjectureGpuDouble
+                },
+                {
+                    (FractalTypeEnum.CollatzConjecture, false), _collatzConjectureGpuFloat
                 }
             }.ToFrozenDictionary();
 
             InitializeComponent();
             DataContext = this;
 
-            Closed += (_, __) =>
-            {
-                (_selectedFractal as IFractalDisposable)?.Dispose();
-            };
+            Closed += (_, __) => { (_selectedFractal as IFractalDisposable)?.Dispose(); };
 
             ContentRendered += (_, __) =>
             {
@@ -117,10 +130,7 @@ namespace FractalsWpf
                 Render();
             };
 
-            MaxIterationsSlider.ValueChanged += (_, __) =>
-            {
-                Render();
-            };
+            MaxIterationsSlider.ValueChanged += (_, __) => { Render(); };
 
             var lastMousePt = new Point();
             var panningInProgress = false;
@@ -149,10 +159,7 @@ namespace FractalsWpf
                 panningInProgress = true;
             };
 
-            MouseLeave += (_, __) =>
-            {
-                panningInProgress = false;
-            };
+            MouseLeave += (_, __) => { panningInProgress = false; };
 
             MouseMove += (_, __) =>
             {
@@ -189,10 +196,7 @@ namespace FractalsWpf
                 }
             };*/
 
-            MouseUp += (_, __) =>
-            {
-                panningInProgress = false;
-            };
+            MouseUp += (_, __) => { panningInProgress = false; };
 
             MouseWheel += (_, args) =>
             {
@@ -209,6 +213,7 @@ namespace FractalsWpf
                     FractalTypeEnum.MandelbrotSet => IsMandelbrotSet = true,
                     FractalTypeEnum.JuliaSet => IsJuliaSet = true,
                     FractalTypeEnum.BarnsleyFern => IsBarnsleyFern = true,
+                    FractalTypeEnum.CollatzConjecture => IsCollatzConjecture = true,
                     _ => throw new ArgumentOutOfRangeException()
                 };
             };
@@ -248,10 +253,7 @@ namespace FractalsWpf
                 Render();
             };
 
-            ZoomLevelSlider.ValueChanged += (_, __) =>
-            {
-                ZoomLevelChanged();
-            };
+            ZoomLevelSlider.ValueChanged += (_, __) => { ZoomLevelChanged(); };
         }
 
         public static FrozenDictionary<ColourMapEnum, int[]> AvailableColourMaps => new Dictionary<ColourMapEnum, int[]>
@@ -342,6 +344,7 @@ namespace FractalsWpf
                 OnPropertyChanged(IS_MANDELBROT_SET_TEXT);
                 OnPropertyChanged(IS_JULIA_SET_TEXT);
                 OnPropertyChanged(IS_BARNSLEY_FERN_TEXT);
+                OnPropertyChanged(IS_COLLATZ_CONJECTURE_TEXT);
                 UpdateSelectedFractal();
 
                 ZoomLevel = 1;
@@ -364,6 +367,7 @@ namespace FractalsWpf
                 OnPropertyChanged(IS_MANDELBROT_SET_TEXT);
                 OnPropertyChanged(IS_JULIA_SET_TEXT);
                 OnPropertyChanged(IS_BARNSLEY_FERN_TEXT);
+                OnPropertyChanged(IS_COLLATZ_CONJECTURE_TEXT);
                 UpdateSelectedFractal();
 
                 ZoomLevel = 1;
@@ -386,6 +390,7 @@ namespace FractalsWpf
                 OnPropertyChanged(IS_MANDELBROT_SET_TEXT);
                 OnPropertyChanged(IS_JULIA_SET_TEXT);
                 OnPropertyChanged(IS_BARNSLEY_FERN_TEXT);
+                OnPropertyChanged(IS_COLLATZ_CONJECTURE_TEXT);
                 UpdateSelectedFractal();
 
                 ZoomLevel = 1;
@@ -395,6 +400,29 @@ namespace FractalsWpf
                 AdjustAspectRatio();
 
                 SelectedColourMap = AvailableColourMaps[ColourMapEnum.ForestGreenBlack];
+                Render();
+            }
+        }
+
+        public bool IsCollatzConjecture
+        {
+            get => _fractalType == FractalTypeEnum.CollatzConjecture;
+            set
+            {
+                _fractalType = FractalTypeEnum.CollatzConjecture;
+                OnPropertyChanged(IS_MANDELBROT_SET_TEXT);
+                OnPropertyChanged(IS_JULIA_SET_TEXT);
+                OnPropertyChanged(IS_BARNSLEY_FERN_TEXT);
+                OnPropertyChanged(IS_COLLATZ_CONJECTURE_TEXT);
+                UpdateSelectedFractal();
+
+                ZoomLevel = 1;
+                MaxIterations = 200;
+
+                SetDefaultPosition();
+                AdjustAspectRatio();
+
+                SelectedColourMap = AvailableColourMaps[ColourMapEnum.Jet];
                 Render();
             }
         }
@@ -454,7 +482,6 @@ namespace FractalsWpf
 
                 case FractalTypeEnum.JuliaSet:
                 {
-                    _juliaConstant = new Point(-0.35, 0.65);
                     BottomLeft = new Point(-1.5d, -1.5d);
                     TopRight = new Point(1.5d, 1.5d);
 
@@ -465,6 +492,14 @@ namespace FractalsWpf
                 {
                     BottomLeft = new Point(-3d, -1d);
                     TopRight = new Point(3d, 11d);
+
+                    break;
+                }
+
+                case FractalTypeEnum.CollatzConjecture:
+                {
+                    BottomLeft = new Point(-2.25d, -1.5d);
+                    TopRight = new Point(0.75d, 1.5d);
 
                     break;
                 }
@@ -506,7 +541,7 @@ namespace FractalsWpf
 
         private void UpdateSelectedFractal()
         {
-            _selectedFractal = _dict[Tuple.Create(_fractalType, _isGpuDataTypeDouble)];
+            _selectedFractal = _dict[(_fractalType, _isGpuDataTypeDouble)];
         }
 
         private void SetStatusBarLeftText(TimeSpan elapsedTime1, TimeSpan elapsedTime2, TimeSpan elapsedTime3)
@@ -583,12 +618,12 @@ namespace FractalsWpf
                 _fractalImageHeight,
                 MaxIterations));
 
-            var values = tuple1.Item1;
-            var elapsedTime1 = tuple1.Item2;
+            var values = tuple1.Result;
+            var elapsedTime1 = tuple1.ElapsedTime;
 
             var tuple2 = TimeIt(() => ValuesToPixels(values, _selectedColourMap));
-            var pixels = tuple2.Item1;
-            var elapsedTime2 = tuple2.Item2;
+            var pixels = tuple2.Result;
+            var elapsedTime2 = tuple2.ElapsedTime;
 
             var elapsedTime3 = TimeIt(() =>
             {
@@ -622,13 +657,13 @@ namespace FractalsWpf
             return cs;
         }
 
-        private static Tuple<T, TimeSpan> TimeIt<T>(Func<T> func)
+        private static (T Result, TimeSpan ElapsedTime) TimeIt<T>(Func<T> func)
         {
             var stopwatch = Stopwatch.StartNew();
             var result = func();
             stopwatch.Stop();
 
-            return Tuple.Create(result, stopwatch.Elapsed);
+            return (result, stopwatch.Elapsed);
         }
 
         private static TimeSpan TimeIt(Action action)

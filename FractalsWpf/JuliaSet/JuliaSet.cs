@@ -3,7 +3,7 @@ using MathNet.Numerics;
 using System.Linq;
 using System.Numerics;
 
-namespace FractalsWpf
+namespace FractalsWpf.JuliaSet
 {
     public class JuliaSet : IFractal
     {

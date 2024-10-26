@@ -4,6 +4,7 @@
     {
         MandelbrotSet = 0,
         JuliaSet = 1,
-        BarnsleyFern = 2
+        BarnsleyFern = 2,
+        CollatzConjecture = 3
     }
 }

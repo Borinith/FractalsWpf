@@ -1,22 +1,21 @@
 ﻿using FractalsWpf.Interfaces;
 using OpenCL;
 using System.Numerics;
-using System.Windows;
 
-namespace FractalsWpf
+namespace FractalsWpf.CollatzConjecture
 {
-    internal class JuliaSetGpuDouble : IFractalDisposable
+    public class CollatzConjectureDouble : IFractalDisposable
     {
         private readonly OpenCLRunner _runner;
         private OpenCLBuffer? _resultsBuffer;
 
-        public JuliaSetGpuDouble()
+        public CollatzConjectureDouble()
         {
-            _runner = new OpenCLRunner("CreatePixelArrayJuliaSetDouble");
+            _runner = new OpenCLRunner("CreatePixelArrayCollatzConjectureDouble");
         }
 
         public ushort[] CreatePixelArray(
-            Complex c,
+            Complex _,
             Complex bottomLeft,
             Complex topRight,
             int numPointsWide,
@@ -30,11 +29,10 @@ namespace FractalsWpf
 
             ReallocateResultsBufferIfNecessary(numResults);
 
-            _runner.Kernel.SetValueArgument(0, c);
-            _runner.Kernel.SetValueArgument(1, bottomLeft);
-            _runner.Kernel.SetValueArgument(2, new Point(deltaReal, deltaImaginary));
-            _runner.Kernel.SetValueArgument(3, maxIterations);
-            _runner.Kernel.SetMemoryArgument(4, _resultsBuffer);
+            _runner.Kernel.SetValueArgument(0, bottomLeft);
+            _runner.Kernel.SetValueArgument(1, new Complex(deltaReal, deltaImaginary));
+            _runner.Kernel.SetValueArgument(2, maxIterations);
+            _runner.Kernel.SetMemoryArgument(3, _resultsBuffer);
             _runner.RunKernelGlobal2D(numPointsWide, numPointsHigh);
             _runner.ReadBuffer(_resultsBuffer!, results);
             _runner.Finish();

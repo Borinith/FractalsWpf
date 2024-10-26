@@ -61,6 +61,10 @@
                                  VerticalAlignment="Center" Margin="0,8,0,0">
                         Barnsley Fern
                     </RadioButton>
+                    <RadioButton GroupName="Fractal" IsChecked="{Binding Path=IsCollatzConjecture}"
+                                 VerticalAlignment="Center" Margin="0,8,0,0">
+                        Collatz conjecture
+                    </RadioButton>
                 </StackPanel>
                 <!--<StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <Label VerticalAlignment="Center">GPU data type:</Label>

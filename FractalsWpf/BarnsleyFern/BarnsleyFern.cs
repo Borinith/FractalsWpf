@@ -5,7 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Windows;
 
-namespace FractalsWpf
+namespace FractalsWpf.BarnsleyFern
 {
     public class BarnsleyFern : IFractal
     {

@@ -27,6 +27,8 @@
     <None Remove="OpenCL\CreatePixelArrayJuliaSetFloat.cl" />
     <None Remove="OpenCL\CreatePixelArrayMandelbrotSetDouble.cl" />
     <None Remove="OpenCL\CreatePixelArrayMandelbrotSetFloat.cl" />
+    <None Remove="OpenCL\CreatePixelArrayCollatzConjectureDouble.cl" />
+    <None Remove="OpenCL\CreatePixelArrayCollatzConjectureFloat.cl" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +40,8 @@
     <EmbeddedResource Include="OpenCL\CreatePixelArrayJuliaSetFloat.cl" />
     <EmbeddedResource Include="OpenCL\CreatePixelArrayMandelbrotSetDouble.cl" />
     <EmbeddedResource Include="OpenCL\CreatePixelArrayMandelbrotSetFloat.cl" />
+    <EmbeddedResource Include="OpenCL\CreatePixelArrayCollatzConjectureDouble.cl" />
+    <EmbeddedResource Include="OpenCL\CreatePixelArrayCollatzConjectureFloat.cl" />
   </ItemGroup>
 
   <ItemGroup>
