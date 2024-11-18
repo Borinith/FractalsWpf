@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <StartupObject>FractalsWpf.App</StartupObject>
@@ -47,7 +47,7 @@
   <ItemGroup>
     <PackageReference Include="FSCL.Compiler" Version="2.0.1" />
     <PackageReference Include="FSCL.Runtime" Version="2.0.1" />
-    <PackageReference Include="FSharp.Core" Version="8.0.301" />
+    <PackageReference Include="FSharp.Core" Version="9.0.100" />
     <PackageReference Include="MaterialDesignColors" Version="3.1.0" />
     <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
