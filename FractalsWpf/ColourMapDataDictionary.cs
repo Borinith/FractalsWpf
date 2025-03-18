@@ -11,35 +11,32 @@ namespace FractalsWpf
             new Dictionary<ColourEnum, double[][]>
             {
                 {
-                    ColourEnum.Red, new[]
-                    {
-                        new[] { 0d, 0, 0 },
-                        new[] { 0.35, 0, 0 },
-                        new[] { 0.66, 1, 1 },
-                        new[] { 0.89, 1, 1 },
-                        new[] { 1, 0.5, 0.5 }
-                    }
+                    ColourEnum.Red, [
+                        [0d, 0, 0],
+                        [0.35, 0, 0],
+                        [0.66, 1, 1],
+                        [0.89, 1, 1],
+                        [1, 0.5, 0.5]
+                    ]
                 },
                 {
-                    ColourEnum.Green, new[]
-                    {
-                        new[] { 0d, 0, 0 },
-                        new[] { 0.125, 0, 0 },
-                        new[] { 0.375, 1, 1 },
-                        new[] { 0.64, 1, 1 },
-                        new[] { 0.91, 0, 0 },
-                        new[] { 1d, 0, 0 }
-                    }
+                    ColourEnum.Green, [
+                        [0d, 0, 0],
+                        [0.125, 0, 0],
+                        [0.375, 1, 1],
+                        [0.64, 1, 1],
+                        [0.91, 0, 0],
+                        [1d, 0, 0]
+                    ]
                 },
                 {
-                    ColourEnum.Blue, new[]
-                    {
-                        new[] { 0, 0.5, 0.5 },
-                        new[] { 0.11, 1, 1 },
-                        new[] { 0.34, 1, 1 },
-                        new[] { 0.65, 0, 0 },
-                        new[] { 1d, 0, 0 }
-                    }
+                    ColourEnum.Blue, [
+                        [0, 0.5, 0.5],
+                        [0.11, 1, 1],
+                        [0.34, 1, 1],
+                        [0.65, 0, 0],
+                        [1d, 0, 0]
+                    ]
                 }
             }.ToFrozenDictionary();
 
@@ -47,29 +44,26 @@ namespace FractalsWpf
             new Dictionary<ColourEnum, double[][]>
             {
                 {
-                    ColourEnum.Red, new[]
-                    {
-                        new[] { 0d, 0, 0 },
-                        new[] { 0.0547, 1, 1 },
-                        new[] { 0.250, 0.027, 0.250 },
-                        new[] { 1d, 1, 1 }
-                    }
+                    ColourEnum.Red, [
+                        [0d, 0, 0],
+                        [0.0547, 1, 1],
+                        [0.250, 0.027, 0.250],
+                        [1d, 1, 1]
+                    ]
                 },
                 {
-                    ColourEnum.Green, new[]
-                    {
-                        new[] { 0d, 0, 0 },
-                        new[] { 1d, 0, 0 }
-                    }
+                    ColourEnum.Green, [
+                        [0d, 0, 0],
+                        [1d, 0, 0]
+                    ]
                 },
                 {
-                    ColourEnum.Blue, new[]
-                    {
-                        new[] { 0d, 0, 0 },
-                        new[] { 0.5, 1, 1 },
-                        new[] { 0.735, 0, 0 },
-                        new[] { 1d, 0, 0 }
-                    }
+                    ColourEnum.Blue, [
+                        [0d, 0, 0],
+                        [0.5, 1, 1],
+                        [0.735, 0, 0],
+                        [1d, 0, 0]
+                    ]
                 }
             }.ToFrozenDictionary();
 

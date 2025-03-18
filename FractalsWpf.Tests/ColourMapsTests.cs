@@ -62,6 +62,7 @@ namespace FractalsWpf.Tests
             AssertRgbaValues(actual, expected);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
         private static void AssertRgbaValues(IReadOnlyList<double[]> actual, IReadOnlyList<double[]> expected)
         {
             const double tolerancePercent = 0.0001;

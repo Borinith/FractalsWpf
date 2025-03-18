@@ -27,12 +27,15 @@ I ended up porting some of the Matplotlib Python code to C# in order to obtain t
 Having made a colour map, the next step was to map each value in the fractal data to an entry in the colour map. Each value represents the iteration number at which a given point diverges. I use the following code to normalise the values and then map them to entries in the colour map:
 
 ```C#
-private static int[] ValuesToPixels(int[] values, IReadOnlyList<int> colourMap)
+private static int[] ValuesToPixels(ushort[] values, int[] colourMap)
 {
-    var lastIndex = colourMap.Count - 1;
-    var vmin = (double)values.Min();
-    var vmax = (double)values.Max();
+    var lastIndex = colourMap.Length - 1;
+
+    var vmin = Convert.ToDouble(values.Min());
+    var vmax = Convert.ToDouble(values.Max());
+
     var divisor = vmax - vmin;
+
     var normalisedValues = values.Select(p => (p - vmin) / divisor).ToArray();
     return normalisedValues.Select(p => colourMap[(int)Math.Floor(p * lastIndex)]).ToArray();
 }

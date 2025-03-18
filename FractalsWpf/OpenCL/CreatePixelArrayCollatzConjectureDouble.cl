@@ -12,20 +12,17 @@ kernel void CreatePixelArrayCollatzConjectureDouble(
 
 	double pi = 3.14159265358979323846;
 
-	double zr = 0.0f;
-	double zi = 0.0f;
-
-	double cr = bottomLeft.x + (delta.x * x);
-	double ci = bottomLeft.y + (delta.y * y);
+	double zr = bottomLeft.x + (delta.x * x);
+	double zi = bottomLeft.y + (delta.y * y);
 
 	ushort iter = 0;
 
 	for (; iter < maxIterations; ++iter)
 	{
-		double zrNext = 0.25 * (2 + 7 * zr - 2 * cos(pi * zr) * cosh(pi * zi) - 5 * zr * cos(pi * zr) * cosh(pi * zi) - 5 * zi * sin(pi * zr) * sinh(pi * zi)) + cr;
-		double ziNext = 0.25 * (7 * zi + 2 * sin(pi * zr) * sinh(pi * zi) + 5 * zr * sin(pi * zr) * sinh(pi * zi) - 5 * zi * cos(pi * zr) * cosh(pi * zi)) + ci;
+		double zrNext = 0.25 * (2 + 7 * zr - (2 + 5 * zr) * cos(pi * zr) * cosh(pi * zi) - 5 * zi * sin(pi * zr) * sinh(pi * zi));
+		double ziNext = 0.25 * (7 * zi - 5 * zi * cos(pi * zr) * cosh(pi * zi) + (2 + 5 * zr) * sin(pi * zr) * sinh(pi * zi));
 
-		if (zrNext * zrNext + ziNext * ziNext >= 4000.0f)
+		if (zrNext * zrNext + ziNext * ziNext >= 50000.0f)
 		{
 			break;
 		}

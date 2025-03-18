@@ -10,20 +10,17 @@
 
 	float pi = 3.14159265358979323846f;
 
-	float zr = 0.0f;
-	float zi = 0.0f;
-
-	float cr = bottomLeft.x + (delta.x * x);
-	float ci = bottomLeft.y + (delta.y * y);
+	float zr = bottomLeft.x + (delta.x * x);
+	float zi = bottomLeft.y + (delta.y * y);
 
 	ushort iter = 0;
 
 	for (; iter < maxIterations; ++iter)
 	{
-		float zrNext = 0.25 * (2 + 7 * zr - 2 * cos(pi * zr) * cosh(pi * zi) - 5 * zr * cos(pi * zr) * cosh(pi * zi) - 5 * zi * sin(pi * zr) * sinh(pi * zi)) + cr;
-		float ziNext = 0.25 * (7 * zi + 2 * sin(pi * zr) * sinh(pi * zi) + 5 * zr * sin(pi * zr) * sinh(pi * zi) - 5 * zi * cos(pi * zr) * cosh(pi * zi)) + ci;
+		float zrNext = 0.25 * (2 + 7 * zr - (2 + 5 * zr) * cos(pi * zr) * cosh(pi * zi) - 5 * zi * sin(pi * zr) * sinh(pi * zi));
+		float ziNext = 0.25 * (7 * zi - 5 * zi * cos(pi * zr) * cosh(pi * zi) + (2 + 5 * zr) * sin(pi * zr) * sinh(pi * zi));
 
-		if (zrNext * zrNext + ziNext * ziNext >= 4000.0f)
+		if (zrNext * zrNext + ziNext * ziNext >= 50000.0f)
 		{
 			break;
 		}

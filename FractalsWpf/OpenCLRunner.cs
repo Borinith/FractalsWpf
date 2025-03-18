@@ -45,7 +45,7 @@ namespace FractalsWpf
         {
             const OpenCLMemoryFlags flags = OpenCLMemoryFlags.WriteOnly | OpenCLMemoryFlags.AllocateHostPointer;
 
-            return new OpenCLBuffer(Context, flags, typeof(T), new[] { count });
+            return new OpenCLBuffer(Context, flags, typeof(T), [count]);
         }
 
         public void ReadBuffer<T>(OpenCLBuffer sourceBuffer, T[] destinationArray)

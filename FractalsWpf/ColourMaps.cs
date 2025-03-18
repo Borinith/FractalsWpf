@@ -58,15 +58,15 @@ namespace FractalsWpf
 
         private static double[][] RsGsBsToColourValues(
             int n,
-            IReadOnlyList<double> rs,
-            IReadOnlyList<double> gs,
-            IReadOnlyList<double> bs)
+            double[] rs,
+            double[] gs,
+            double[] bs)
         {
             var values = new List<double[]>();
 
             for (var i = 0; i < n; i++)
             {
-                values.Add(new[] { rs[i], gs[i], bs[i], 1d });
+                values.Add([rs[i], gs[i], bs[i], 1d]);
             }
 
             return values.ToArray();
@@ -122,12 +122,12 @@ namespace FractalsWpf
             return lut.Select(ClipZeroToOne).ToArray();
         }
 
-        private static int[] SearchSorted(IReadOnlyList<double> arr, IReadOnlyList<double> vs)
+        private static int[] SearchSorted(double[] arr, double[] vs)
         {
-            var result = new int[vs.Count];
-            var arrLen = arr.Count;
+            var result = new int[vs.Length];
+            var arrLen = arr.Length;
 
-            for (var i = 0; i < vs.Count; i++)
+            for (var i = 0; i < vs.Length; i++)
             {
                 var v = vs[i];
                 var added = false;

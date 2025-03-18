@@ -37,9 +37,9 @@ namespace FractalsWpf
         private static readonly int[] AfmHotColourMap = ColourMaps.GetColourMap(ColourMapEnum.AfmHot);
         private static readonly int[] GistHeatColourMap = ColourMaps.GetColourMap(ColourMapEnum.GistHeat);
 
-        private static readonly int[] ForestGreenWhiteColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] { Colors.ForestGreen.ToInt() }).ToArray();
-        private static readonly int[] ForestGreenBlackColourMap = Enumerable.Repeat(Colors.Black.ToInt(), 255).Concat(new[] { Colors.ForestGreen.ToInt() }).ToArray();
-        private static readonly int[] MonochromeColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat(new[] { Colors.Black.ToInt() }).ToArray();
+        private static readonly int[] ForestGreenWhiteColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat([Colors.ForestGreen.ToInt()]).ToArray();
+        private static readonly int[] ForestGreenBlackColourMap = Enumerable.Repeat(Colors.Black.ToInt(), 255).Concat([Colors.ForestGreen.ToInt()]).ToArray();
+        private static readonly int[] MonochromeColourMap = Enumerable.Repeat(Colors.White.ToInt(), 255).Concat([Colors.Black.ToInt()]).ToArray();
 
         private readonly IFractal _barnsleyFern = new BarnsleyFern.BarnsleyFern();
 
@@ -417,7 +417,7 @@ namespace FractalsWpf
                 UpdateSelectedFractal();
 
                 ZoomLevel = 1;
-                MaxIterations = 200;
+                MaxIterations = 20;
 
                 SetDefaultPosition();
                 AdjustAspectRatio();
@@ -498,8 +498,8 @@ namespace FractalsWpf
 
                 case FractalTypeEnum.CollatzConjecture:
                 {
-                    BottomLeft = new Point(-2.25d, -1.5d);
-                    TopRight = new Point(0.75d, 1.5d);
+                    BottomLeft = new Point(-0.75d, -0.75d);
+                    TopRight = new Point(0.75d, 0.75d);
 
                     break;
                 }
@@ -597,6 +597,10 @@ namespace FractalsWpf
             {
                 MaxIterations += diff * 500_000;
             }
+            else if (IsCollatzConjecture)
+            {
+                MaxIterations += diff * 3;
+            }
 
             Render();
 
@@ -634,18 +638,18 @@ namespace FractalsWpf
             SetStatusBarLeftText(elapsedTime1, elapsedTime2, elapsedTime3);
         }
 
-        private static int[] ValuesToPixels(IReadOnlyList<ushort> values, IReadOnlyList<int> colourMap)
+        private static int[] ValuesToPixels(ushort[] values, int[] colourMap)
         {
-            var lastIndex = colourMap.Count - 1;
+            var lastIndex = colourMap.Length - 1;
 
             var vmin = Convert.ToDouble(values.Min());
             var vmax = Convert.ToDouble(values.Max());
 
             var divisor = vmax - vmin;
 
-            var cs = new int[values.Count];
+            var cs = new int[values.Length];
 
-            Parallel.For(0, values.Count, i =>
+            Parallel.For(0, values.Length, i =>
             {
                 var p = values[i];
                 var v1 = (p - vmin) / divisor;
