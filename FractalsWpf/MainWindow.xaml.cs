@@ -61,6 +61,7 @@ namespace FractalsWpf
         private FractalTypeEnum _fractalType;
         private bool _initDone;
         private bool _isGpuDataTypeDouble;
+        private bool _isZoomBlocked;
         private int _maxIterations;
         private int _previousZoomLevel;
         private int[] _selectedColourMap;
@@ -347,8 +348,12 @@ namespace FractalsWpf
                 OnPropertyChanged(IS_COLLATZ_CONJECTURE_TEXT);
                 UpdateSelectedFractal();
 
-                ZoomLevel = 1;
+                _isZoomBlocked = true;
+
                 MaxIterations = 120;
+                ZoomLevel = 1;
+
+                _isZoomBlocked = false;
 
                 SetDefaultPosition();
                 AdjustAspectRatio();
@@ -370,8 +375,12 @@ namespace FractalsWpf
                 OnPropertyChanged(IS_COLLATZ_CONJECTURE_TEXT);
                 UpdateSelectedFractal();
 
-                ZoomLevel = 1;
+                _isZoomBlocked = true;
+
                 MaxIterations = 4096;
+                ZoomLevel = 1;
+
+                _isZoomBlocked = false;
 
                 SetDefaultPosition();
                 AdjustAspectRatio();
@@ -393,8 +402,12 @@ namespace FractalsWpf
                 OnPropertyChanged(IS_COLLATZ_CONJECTURE_TEXT);
                 UpdateSelectedFractal();
 
-                ZoomLevel = 1;
+                _isZoomBlocked = true;
+
                 MaxIterations = 1_000_000;
+                ZoomLevel = 1;
+
+                _isZoomBlocked = false;
 
                 SetDefaultPosition();
                 AdjustAspectRatio();
@@ -416,8 +429,12 @@ namespace FractalsWpf
                 OnPropertyChanged(IS_COLLATZ_CONJECTURE_TEXT);
                 UpdateSelectedFractal();
 
-                ZoomLevel = 1;
+                _isZoomBlocked = true;
+
                 MaxIterations = 20;
+                ZoomLevel = 1;
+
+                _isZoomBlocked = false;
 
                 SetDefaultPosition();
                 AdjustAspectRatio();
@@ -498,8 +515,8 @@ namespace FractalsWpf
 
                 case FractalTypeEnum.CollatzConjecture:
                 {
-                    BottomLeft = new Point(-0.75d, -0.75d);
-                    TopRight = new Point(0.75d, 0.75d);
+                    BottomLeft = new Point(-1d, -1d);
+                    TopRight = new Point(1d, 1d);
 
                     break;
                 }
@@ -589,17 +606,16 @@ namespace FractalsWpf
                 }
             }
 
-            if (IsMandelbrotSet)
+            if (!_isZoomBlocked)
             {
-                MaxIterations += diff * 100;
-            }
-            else if (IsBarnsleyFern)
-            {
-                MaxIterations += diff * 500_000;
-            }
-            else if (IsCollatzConjecture)
-            {
-                MaxIterations += diff * 3;
+                MaxIterations += _fractalType switch
+                {
+                    FractalTypeEnum.MandelbrotSet => diff * 100,
+                    FractalTypeEnum.JuliaSet => 0,
+                    FractalTypeEnum.BarnsleyFern => diff * 500_000,
+                    FractalTypeEnum.CollatzConjecture => diff * 3,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
             }
 
             Render();
