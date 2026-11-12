@@ -1,13 +1,13 @@
 ﻿using FractalsWpf.Enums;
 using System.Collections.Generic;
-using Xunit;
+using System.Threading.Tasks;
 
 namespace FractalsWpf.Tests
 {
     public class ColourMapsTests
     {
-        [Fact]
-        public void ColourMapNotUsingLambdas()
+        [Test]
+        public async Task ColourMapNotUsingLambdas()
         {
             var actual = ColourMaps.GetColourMapRgbaValues(ColourMapEnum.Jet, 16);
 
@@ -31,11 +31,11 @@ namespace FractalsWpf.Tests
                 new[] { 0.5, 0, 0, 1 }
             };
 
-            AssertRgbaValues(actual, expected);
+            await AssertRgbaValues(actual, expected);
         }
 
-        [Fact]
-        public void ColourMapUsingLambdas()
+        [Test]
+        public async Task ColourMapUsingLambdas()
         {
             var actual = ColourMaps.GetColourMapRgbaValues(ColourMapEnum.Ocean, 16);
 
@@ -59,21 +59,20 @@ namespace FractalsWpf.Tests
                 new[] { 1d, 1, 1, 1 }
             };
 
-            AssertRgbaValues(actual, expected);
+            await AssertRgbaValues(actual, expected);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "<Pending>")]
-        private static void AssertRgbaValues(IReadOnlyList<double[]> actual, IReadOnlyList<double[]> expected)
+        private static async Task AssertRgbaValues(IReadOnlyList<double[]> actual, IReadOnlyList<double[]> expected)
         {
             const double tolerancePercent = 0.0001;
-            Assert.Equal(actual.Count, expected.Count);
+            await Assert.That(actual.Count).IsEqualTo(expected.Count);
 
             for (var index = 0; index < actual.Count; index++)
             {
-                Assert.Equal(actual[index][0], expected[index][0], expected[index][0] * tolerancePercent);
-                Assert.Equal(actual[index][1], expected[index][1], expected[index][1] * tolerancePercent);
-                Assert.Equal(actual[index][2], expected[index][2], expected[index][2] * tolerancePercent);
-                Assert.Equal(actual[index][3], expected[index][3], expected[index][3] * tolerancePercent);
+                await Assert.That(actual[index][0]).IsEqualTo(expected[index][0]).WithinRelativeTolerance(tolerancePercent);
+                await Assert.That(actual[index][1]).IsEqualTo(expected[index][1]).WithinRelativeTolerance(tolerancePercent);
+                await Assert.That(actual[index][2]).IsEqualTo(expected[index][2]).WithinRelativeTolerance(tolerancePercent);
+                await Assert.That(actual[index][3]).IsEqualTo(expected[index][3]).WithinRelativeTolerance(tolerancePercent);
             }
         }
     }

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="FractalsWpf.Tests/FractalsWpf.Tests.csproj" />
+  <Project Path="FractalsWpf/FractalsWpf.csproj" />
+</Solution>

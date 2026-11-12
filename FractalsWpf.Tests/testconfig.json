@@ -1,0 +1,6 @@
+{
+  "environmentVariables": {
+    "TUNIT_DISABLE_HTML_REPORTER": "true",
+    "TUNIT_DISABLE_JSON_REPORT": "true"
+  }
+}
